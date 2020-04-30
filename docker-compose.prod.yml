@@ -1,0 +1,7 @@
+version: "3.7"
+
+services:
+  room_settings:
+    command: gunicorn --bind 0.0.0.0:5000 app:app
+    env_file:
+      - ./services/room_settings/.env.prod

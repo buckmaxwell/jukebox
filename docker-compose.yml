@@ -1,0 +1,64 @@
+version: "3.7"
+
+services:
+  room_settings:
+    build: ./services/room_settings
+    volumes:
+      - ./services/room_settings/:/usr/src/app/
+    ports:
+      - 5000:5000
+    env_file:
+      - ./services/room_settings/.env.dev
+    depends_on:
+      - redis
+      - rabbitmq
+
+  create_authorization:
+    build: ./services/authorizer/workers/create_authorization
+    volumes:
+      - ./services/authorizer/workers/create_authorization/:/usr/src/app/
+    env_file:
+      - ./services/authorizer/workers/.env.dev
+    depends_on:
+      - redis
+      - rabbitmq
+      - postgres
+
+  refresh_authorization:
+    build: ./services/authorizer/workers/refresh_authorization
+    volumes:
+      - ./services/authorizer/workers/refresh_authorization/:/usr/src/app/
+    env_file:
+      - ./services/authorizer/workers/.env.dev
+    depends_on:
+      - redis
+      - rabbitmq
+      - postgres
+
+  redis:
+    image: redis:6
+
+  rabbitmq:
+    hostname: rabbitmq
+    image: rabbitmq:3-management
+    ports:
+      - 15672:15672
+
+  postgres:
+    image: postgres:12
+    env_file:
+      - ./services/postgres/.env.dev
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/
+
+  pgmanager:
+    build: ./services/postgres
+    volumes:
+      - ./services/postgres/:/usr/src/app/
+    env_file:
+      - ./services/postgres/.env.dev
+    depends_on:
+      - postgres
+
+volumes:
+  postgres-data:
