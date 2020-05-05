@@ -2,6 +2,7 @@
 
 from db import Authorization, Session
 import arrow
+import async_messenger
 import json
 import os
 import pika
