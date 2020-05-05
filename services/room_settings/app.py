@@ -26,8 +26,7 @@ def login_required(f):
         authorization_id = r.get(room_settings_cookie) if room_settings_cookie else None
         if authorization_id:
             async_messenger.send(
-                "authorizer",
-                "refresh_authorization",
+                "authorizer.refresh_authorization",
                 {
                     "authorization_id": authorization_id,
                     "job_id": job_id,
@@ -81,8 +80,7 @@ def spotify():
     if code is not None and r.get(state):
         room_settings_cookie = str(uuid4())
         async_messenger.send(
-            "authorizer",
-            "create_authorization",
+            "authorizer.create_authorization",
             {"code": code, "key": room_settings_cookie, "service": "spotify"},
         )
 
@@ -90,10 +88,9 @@ def spotify():
             raise TimeoutError("0Z9MI")
 
         async_messenger.send(
-            "user",
-            "find_or_create_user",
-            {"room_settings_cookie": room_settings_cookie},
+            "user.find_or_create_user", {"room_settings_cookie": room_settings_cookie},
         )
+
         response = make_response(redirect("/"))
         response.set_cookie("ROOM_SETTINGS", room_settings_cookie)
         response.set_cookie("SERVICE", "spotify")

@@ -4,13 +4,12 @@ import json
 import redis
 
 
-def send(service, method, message):
+def send(queue, message):
     parameters = pika.ConnectionParameters(
         host="rabbitmq", retry_delay=0.25, connection_attempts=60
     )
     connection = pika.BlockingConnection(parameters)
     channel = connection.channel()
-    qname = f"{service}.{method}"
-    channel.queue_declare(queue=qname)
-    channel.basic_publish(exchange="", routing_key=qname, body=json.dumps(message))
+    channel.queue_declare(queue=queue)
+    channel.basic_publish(exchange="", routing_key=queue, body=json.dumps(message))
     connection.close()
