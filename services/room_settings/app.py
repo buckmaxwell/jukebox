@@ -84,11 +84,18 @@ def spotify():
             {"code": code, "key": room_settings_cookie, "service": "spotify"},
         )
 
-        if not redis_wait(r, room_settings_cookie):
+        authorization_id = redis_wait(r, room_settings_cookie)
+        if not authorization_id:
             raise TimeoutError("0Z9MI")
 
         async_messenger.send(
-            "user.find_or_create_user", {"room_settings_cookie": room_settings_cookie},
+            "authorizer.make_authorized_request",
+            {
+                "http_verb": "get",
+                "url": "https://api.spotify.com/v1/me",
+                "authorization_id": authorization_id,
+                "queue": "user.find_or_create_user",
+            },
         )
 
         response = make_response(redirect("/"))

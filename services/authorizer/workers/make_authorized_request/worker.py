@@ -46,7 +46,7 @@ def response_to_dict(resp):
     return {
         "body": resp.json(),
         "status_code": resp.status_code,
-        "headers": resp.headers,
+        "headers": dict(resp.headers.lower_items()),
         "url": resp.url,
     }
 

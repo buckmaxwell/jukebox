@@ -5,10 +5,31 @@ services:
     build: ./services/room_settings
     volumes:
       - ./services/room_settings/:/usr/src/app/
+      # https://docs.docker.com/docker-for-mac/osxfs/#ssh-agent-forwarding
+      - type: bind
+        source: /run/host-services/ssh-auth.sock
+        target: /run/host-services/ssh-auth.sock
     ports:
       - 5000:5000
+    environment:
+      - SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock
     env_file:
       - ./services/room_settings/.env.dev
+    depends_on:
+      - redis
+      - rabbitmq
+
+  make_authorized_request:
+    build: ./services/authorizer/workers/make_authorized_request
+    volumes:
+      - ./services/authorizer/workers/make_authorized_request/:/usr/src/app/
+      - type: bind
+        source: /run/host-services/ssh-auth.sock
+        target: /run/host-services/ssh-auth.sock
+    environment:
+      - SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock
+    env_file:
+      - ./services/authorizer/workers/.env.dev
     depends_on:
       - redis
       - rabbitmq
