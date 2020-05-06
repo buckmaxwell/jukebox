@@ -1,8 +1,0 @@
-README.md
-setup.py
-async_messenger/__init__.py
-async_messenger.egg-info/PKG-INFO
-async_messenger.egg-info/SOURCES.txt
-async_messenger.egg-info/dependency_links.txt
-async_messenger.egg-info/requires.txt
-async_messenger.egg-info/top_level.txt
