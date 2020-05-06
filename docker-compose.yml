@@ -13,6 +13,16 @@ services:
       - redis
       - rabbitmq
 
+  make_authorized_request:
+    build: ./services/authorizer/workers/make_authorized_request
+    volumes:
+      - ./services/authorizer/workers/make_authorized_request/:/usr/src/app/
+    env_file:
+      - ./services/authorizer/workers/.env.dev
+    depends_on:
+      - redis
+      - rabbitmq
+
   create_authorization:
     build: ./services/authorizer/workers/create_authorization
     volumes:
