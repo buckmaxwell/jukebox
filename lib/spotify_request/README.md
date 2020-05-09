@@ -1,11 +1,13 @@
 # Synchronous Spotify Request 
 
-Queue messages to a rabbitmq server. Requires a running rabbitmq server to work.
+*A wrapper around python requests that takes care of client credential*
+*authorization for spotify*
+
+Make syncronous client requests to spotifty. These request types don't have
+the ability to access any user data.
 
 ```python
-from sync_spotify_request import user, client
+import spotify_request
 
-params = {'headers':{'SOMEHEADER':1'}}
-client.get("https://spotify.com/api",params )
-user.get('http://spotify.com/api", params)
+spotify_request.get("some_spotify_url",header={'blah':'x'}, otherkwargs='blah' )
 ```
