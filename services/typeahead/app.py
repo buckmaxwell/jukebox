@@ -30,7 +30,7 @@ def spotify_search_response_to_universal_format(resp_dict):
         result_dict["album_art"] = track_dict["album"]["images"][0]["url"]
         result_dict["artists"] = [a["name"] for a in track_dict["artists"]]
         results.append(result_dict)
-    return result_dict
+    return results
 
 
 def spotify_search(request):
@@ -45,8 +45,8 @@ def spotify_search(request):
 
     resp.raise_for_status()
 
-    r.set(f"spotify_{q}_{types}", json.dumps(resp.json()), ex=60 * 60 * 24 * 7)
     formatted_dict = spotify_search_response_to_universal_format(resp.json())
+    r.set(f"spotify_{q}_{types}", json.dumps(formatted_dict), ex=60 * 60 * 24 * 7)
     return jsonify(formatted_dict)
 
 
