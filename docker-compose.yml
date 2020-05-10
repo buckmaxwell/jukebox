@@ -13,6 +13,17 @@ services:
       - redis
       - rabbitmq
 
+  typeahead:
+    build: ./services/typeahead
+    volumes:
+      - ./services/typeahead/:/usr/src/app/
+    ports:
+      - 6000:6000
+    env_file:
+      - ./services/typeahead/.env.dev
+    depends_on:
+      - redis
+
   make_authorized_request:
     build: ./services/authorizer/workers/make_authorized_request
     volumes:
