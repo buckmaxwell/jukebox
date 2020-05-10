@@ -42,6 +42,9 @@ def spotify_search(request):
     resp = spotify_request.get(
         "https://api.spotify.com/v1/search", params={"q": q, "type": types},
     )
+
+    resp.raise_for_status()
+
     r.set(f"spotify_{q}_{types}", json.dumps(resp.json()), ex=60 * 60 * 24 * 7)
     formatted_dict = spotify_search_response_to_universal_format(resp.json())
     return jsonify(formatted_dict)
@@ -53,4 +56,4 @@ def search():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=6000, debug=True)
+    app.run(host="0.0.0.0", port=5001, debug=True)

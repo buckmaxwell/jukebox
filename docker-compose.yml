@@ -18,7 +18,7 @@ services:
     volumes:
       - ./services/typeahead/:/usr/src/app/
     ports:
-      - 6000:6000
+      - 5001:5001
     env_file:
       - ./services/typeahead/.env.dev
     depends_on:

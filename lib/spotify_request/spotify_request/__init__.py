@@ -3,6 +3,7 @@
 import json
 import redis
 import requests
+import logging
 import os
 
 
@@ -18,12 +19,15 @@ def refresh_non_user_access_token():
         data={"grant_type": "client_credentials",},
         auth=(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET),
     )
+
+    resp.raise_for_status()
+
     token, expires = resp.json()["access_token"], resp.json()["expires_in"]
     r.set("SPOTIFY_NON_USER_ACCESS_TOKEN", token, ex=expires)
 
 
 def get(url, **kwargs):
-    if r.get("SPOTIFY_NON_USER_ACCESS_TOKEN"):
+    if not r.get("SPOTIFY_NON_USER_ACCESS_TOKEN"):
         refresh_non_user_access_token()
     kwargs["headers"] = {
         "Authorization": "Bearer {}".format(r.get("SPOTIFY_NON_USER_ACCESS_TOKEN"))
