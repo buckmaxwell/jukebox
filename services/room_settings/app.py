@@ -1,8 +1,8 @@
 #!/usr/bin/env/python3
 
 import async_messenger
-from flask import Flask, request
-from flask import redirect, make_response
+from flask import Flask, request, url_for
+from flask import redirect, make_response, render_template
 from functools import wraps
 from redis_wait import redis_wait
 from spotify_const import *
@@ -47,7 +47,25 @@ def login_required(f):
 @app.route("/")
 @login_required
 def index():
-    return "you are logged in. this is where the preferences pages will be."
+    room_settings_cookie = request.cookies.get("ROOM_SETTINGS")
+    room_code = r.get(f"{room_settings_cookie}_room_code")
+    if room_code is None:
+        room_code = str(uuid4())[0:5].upper()
+        r.set(f"{room_settings_cookie}_room_code", room_code)
+        r.set(room_code, r.get(room_settings_cookie), ex=60 * 60 * 24)
+    return render_template("index.html", room_code=room_code)
+
+
+@app.route("/encore", methods=["POST"])
+@login_required
+def encore():
+    room_settings_cookie = request.cookies.get("ROOM_SETTINGS")
+    room_code = r.get(f"{room_settings_cookie}_room_code")
+    if room_code is None:
+        room_code = str(uuid4())[0:5].upper()
+        r.set(f"{room_settings_cookie}_room_code", room_code)
+    r.set(room_code, r.get(room_settings_cookie), ex=60 * 60 * 24)
+    return redirect(url_for("index"))
 
 
 @app.route("/service-select")
