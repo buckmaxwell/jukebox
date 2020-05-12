@@ -17,13 +17,13 @@ r = redis.Redis(host="redis", port=6379, db=0, decode_responses=True)
 
 
 def spotify_play_song(request, authorization_id):
-    uri = request.args["uri"]
+    uri = request.get_json()["uri"]
     job_id1, job_id2 = str(uuid.uuid4()), str(uuid.uuid4())
     async_messenger.send(
         "authorizer.make_authorized_request",
         {
             "http_verb": "post",
-            "url": f"https://api.spotify.com/v1/me?uri={uri}",
+            "url": f"https://api.spotify.com/v1/me/player/queue?uri={uri}",
             "authorization_id": authorization_id,
             "key": job_id1,
             "expires_in": 60 * 60,
@@ -43,9 +43,10 @@ def spotify_play_song(request, authorization_id):
 
 @app.route("/", methods=["POST"])
 def play_song():
-    # TODO: use request json instaead of requests args and cookies
-    room_code = request.cookies.get("ROOM", request.args.get("room_code"))
-    service = request.cookies.get("SERVICE", request.args.get("service"))
+    room_code = request.get_json()[
+        "room_code"
+    ]  # could technically be a room settings cookie too
+    service = request.get_json()["service"]
     if not service:
         return jsonify({"error": "bad request"}), 400
     authorization_id = r.get(room_code)
