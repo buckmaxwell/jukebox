@@ -1,14 +1,16 @@
 #!/usr/bin/env/python3
 
-import async_messenger
 from flask import Flask, request, url_for
 from flask import redirect, make_response, render_template
 from functools import wraps
 from redis_wait import redis_wait
 from spotify_const import *
 from uuid import uuid4
+import async_messenger
 import os
+import random
 import redis
+import string
 import urllib
 
 
@@ -50,7 +52,7 @@ def index():
     room_settings_cookie = request.cookies.get("ROOM_SETTINGS")
     room_code = r.get(f"{room_settings_cookie}_room_code")
     if room_code is None:
-        room_code = str(uuid4())[0:5].upper()
+        room_code = "".join(random.choice(string.ascii_uppercase) for i in range(5))
         r.set(f"{room_settings_cookie}_room_code", room_code)
         r.set(room_code, r.get(room_settings_cookie), ex=60 * 60 * 24)
     return render_template("index.html", room_code=room_code)
@@ -62,7 +64,7 @@ def encore():
     room_settings_cookie = request.cookies.get("ROOM_SETTINGS")
     room_code = r.get(f"{room_settings_cookie}_room_code")
     if room_code is None:
-        room_code = str(uuid4())[0:5].upper()
+        room_code = "".join(random.choice(string.ascii_uppercase) for i in range(5))
         r.set(f"{room_settings_cookie}_room_code", room_code)
     r.set(room_code, r.get(room_settings_cookie), ex=60 * 60 * 24)
     return redirect(url_for("index"))

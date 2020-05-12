@@ -45,7 +45,7 @@ def spotify_play_song(request, authorization_id):
 def play_song():
     room_code = request.get_json()[
         "room_code"
-    ]  # could technically be a room settings cookie too
+    ].upper()  # could technically be a room settings cookie too
     service = request.get_json()["service"]
     if not service:
         return jsonify({"error": "bad request"}), 400
