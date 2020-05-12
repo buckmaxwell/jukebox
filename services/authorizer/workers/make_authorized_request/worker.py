@@ -43,8 +43,9 @@ def record_queue_response_helper(resp_dict, queue):
 
 
 def response_to_dict(resp):
+    body = "" if resp.status_code == 204 else resp.json()
     return {
-        "body": resp.json(),
+        "body": body,
         "status_code": resp.status_code,
         "headers": dict(resp.headers.lower_items()),
         "url": resp.url,
