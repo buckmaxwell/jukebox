@@ -1,6 +1,11 @@
 <template>
   <div id="app">
-    <RoomCodeForm msg="Welcome to Your Vue.js App" />
+    <RoomCodeForm
+      @setRoomCode="setRoomCode($event)"
+      @setLoggedIn="setLoggedIn($event)"
+      :room-code="roomCode"
+      :logged-in="loggedIn"
+    />
   </div>
 </template>
 
@@ -11,6 +16,21 @@ export default {
   name: "App",
   components: {
     RoomCodeForm
+  },
+  data() {
+    return {
+      loggedIn: false,
+      roomCode: ""
+    };
+  },
+  methods: {
+    setLoggedIn: function(value) {
+      alert("am ghere");
+      this.loggedIn = value;
+    },
+    setRoomCode: function(value) {
+      this.roomCode = value;
+    }
   }
 };
 </script>

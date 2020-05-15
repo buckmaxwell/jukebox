@@ -1,7 +1,8 @@
 #!/usr/bin/env/python3
 
-from flask import Flask, request, url_for
+from flask import Flask, request, url_for, jsonify
 from flask import redirect, make_response, render_template
+from flask_cors import CORS
 from functools import wraps
 from redis_wait import redis_wait
 from spotify_const import *
@@ -15,6 +16,7 @@ import urllib
 
 
 app = Flask(__name__)
+CORS(app)
 
 r = redis.Redis(host="redis", port=6379, db=0, decode_responses=True)
 
@@ -56,6 +58,13 @@ def index():
         r.set(f"{room_settings_cookie}_room_code", room_code)
         r.set(room_code, r.get(room_settings_cookie), ex=60 * 60 * 24)
     return render_template("index.html", room_code=room_code)
+
+
+@app.route("/room/<room_code>", methods=["GET"])
+def public_room(room_code):
+    if r.get(room_code.upper()):
+        return jsonify({"room_code": room_code}), 200
+    return jsonify({"error": "resource not found"}), 404
 
 
 @app.route("/encore", methods=["POST"])

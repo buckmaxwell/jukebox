@@ -47,12 +47,11 @@
           maxlength="5"
           type="text"
           class="form-control col-sm-12"
-          id="roomCode"
-          aria-describedby="roomCodeHelp"
+          v-model="roomCode"
           placeholder="ENTER 5 LETTER CODE"
         />
         <br />
-        <button type="submit" class="btn btn-primary col-sm-12">Submit</button>
+        <button type="button" class="btn btn-primary col-sm-12" v-on:click="joinRoom">JOIN ROOM</button>
       </div>
     </form>
   </div>
@@ -61,8 +60,27 @@
 <script>
 export default {
   name: "RoomCodeForm",
-  props: {
-    msg: String
+  data() {
+    return {
+      roomCode: null
+    };
+  },
+  methods: {
+    joinRoom: function() {
+      let that = this;
+      return this.$http
+        .get("http://localhost:5000/room/" + this.roomCode)
+        .then(function(response) {
+          console.log(response);
+          that.$emit("setLoggedIn", true);
+          that.$emit("setRoomCode", that.roomCode);
+        })
+        .catch(function(error) {
+          console.log(error);
+          that.$emit("setLoggedIn", false);
+          that.$emit("setRoomCode", that.roomCode);
+        });
+    }
   }
 };
 </script>
