@@ -52,18 +52,28 @@ def login_required(f):
 @login_required
 def index():
     room_settings_cookie = request.cookies.get("ROOM_SETTINGS")
+    service_cookie = request.cookies.get("SERVICE")
     room_code = r.get(f"{room_settings_cookie}_room_code")
     if room_code is None:
         room_code = "".join(random.choice(string.ascii_uppercase) for i in range(5))
         r.set(f"{room_settings_cookie}_room_code", room_code)
         r.set(room_code, r.get(room_settings_cookie), ex=60 * 60 * 24)
+        r.set(f"{room_code}_service", service_cookie, ex=60 * 60 * 24)
     return render_template("index.html", room_code=room_code)
 
 
 @app.route("/room/<room_code>", methods=["GET"])
 def public_room(room_code):
-    if r.get(room_code.upper()):
-        return jsonify({"room_code": room_code}), 200
+    if r.get(room_code.upper()) and r.get(f"{room_code.upper()}_service"):
+        return (
+            jsonify(
+                {
+                    "room_code": room_code,
+                    "service": r.get(f"{room_code.upper()}_service"),
+                }
+            ),
+            200,
+        )
     return jsonify({"error": "resource not found"}), 404
 
 
@@ -71,11 +81,13 @@ def public_room(room_code):
 @login_required
 def encore():
     room_settings_cookie = request.cookies.get("ROOM_SETTINGS")
+    service_cookie = request.cookies.get("SERVICE")
     room_code = r.get(f"{room_settings_cookie}_room_code")
     if room_code is None:
         room_code = "".join(random.choice(string.ascii_uppercase) for i in range(5))
         r.set(f"{room_settings_cookie}_room_code", room_code)
     r.set(room_code, r.get(room_settings_cookie), ex=60 * 60 * 24)
+    r.set(f"{room_code}_service", service_cookie, ex=60 * 60 * 24)
     return redirect(url_for("index"))
 
 

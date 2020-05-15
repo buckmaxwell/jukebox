@@ -3,8 +3,10 @@
     <RoomCodeForm
       @setRoomCode="setRoomCode($event)"
       @setLoggedIn="setLoggedIn($event)"
+      @setService="setService($event)"
       :room-code="roomCode"
       :logged-in="loggedIn"
+      :service="service"
       v-if="isLoggedIn() == false"
     />
   </div>
@@ -12,6 +14,7 @@
 
 <script>
 import RoomCodeForm from "./components/RoomCodeForm.vue";
+//import Main from "./components/Main.vue";
 import * as VueCookie from "vue-cookie";
 
 export default {
@@ -22,7 +25,8 @@ export default {
   data() {
     return {
       loggedIn: false,
-      roomCode: ""
+      roomCode: "",
+      service: ""
     };
   },
   methods: {
@@ -38,6 +42,10 @@ export default {
     setRoomCode: function(value) {
       this.roomCode = value;
       VueCookie.set("ROOM_CODE", value, { expires: "1D" });
+    },
+    setService: function(value) {
+      this.service = value;
+      VueCookie.set("SERVICE", value, { expires: "1D" });
     }
   }
 };

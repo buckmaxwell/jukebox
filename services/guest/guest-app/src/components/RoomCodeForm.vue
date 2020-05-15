@@ -62,7 +62,8 @@ export default {
   name: "RoomCodeForm",
   data() {
     return {
-      roomCode: null
+      roomCode: null,
+      service: null
     };
   },
   methods: {
@@ -73,7 +74,8 @@ export default {
         .then(function(response) {
           console.log(response);
           that.$emit("setLoggedIn", true);
-          that.$emit("setRoomCode", that.roomCode);
+          that.$emit("setRoomCode", response.data.room_code);
+          that.$emit("setService", response.data.service);
         })
         .catch(function(error) {
           console.log(error);
