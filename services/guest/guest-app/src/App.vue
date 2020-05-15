@@ -5,6 +5,7 @@
       @setLoggedIn="setLoggedIn($event)"
       :room-code="roomCode"
       :logged-in="loggedIn"
+      v-if="!loggedIn"
     />
   </div>
 </template>
