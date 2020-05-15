@@ -5,7 +5,7 @@
       :data="songs"
       v-model="songSearch"
       size="lg"
-      :serializer="s => s.text"
+      :serializer="s => s.name"
       placeholder="Type an address..."
       @hit="selectedAddress = $event"
     />
@@ -33,15 +33,22 @@ export default {
     };
   },
   methods: {
-    async getSongs(query) {
+    getSongs: function(query) {
       //const res = await fetch(
       //  API_URL.replace(":q", query).replace(":service", this.service)
       //);
-      const resp = await fetch(
-        API_URL.replace(":q", query).replace(":service", this.service)
-      );
-      const suggestions = await resp.json();
-      this.songs = suggestions;
+      let url = API_URL.replace(":q", query).replace(":service", this.service);
+      let that = this;
+      return this.$http
+        .get(url)
+        .then(function(response) {
+          console.log(response);
+          that.songs = response.data;
+        })
+        .catch(function(error) {
+          console.log(error);
+          that.$emit("deleteCookies");
+        });
     }
   },
   watch: {
