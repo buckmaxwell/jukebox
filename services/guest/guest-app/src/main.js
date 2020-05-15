@@ -5,6 +5,7 @@ import Vue from 'vue'
 import VueAxios from 'vue-axios'
 import axios from 'axios'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+import * as VueCookie from 'vue-cookie'
 
 
 Vue.config.productionTip = false
@@ -20,3 +21,5 @@ Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 
 Vue.use(VueAxios, axios)
+
+Vue.use(VueCookie)

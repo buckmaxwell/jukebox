@@ -5,13 +5,14 @@
       @setLoggedIn="setLoggedIn($event)"
       :room-code="roomCode"
       :logged-in="loggedIn"
-      v-if="!loggedIn"
+      v-if="isLoggedIn() == false"
     />
   </div>
 </template>
 
 <script>
 import RoomCodeForm from "./components/RoomCodeForm.vue";
+import * as VueCookie from "vue-cookie";
 
 export default {
   name: "App",
@@ -25,12 +26,18 @@ export default {
     };
   },
   methods: {
+    isLoggedIn: function() {
+      if (VueCookie.get("ROOM_CODE")) {
+        return true;
+      }
+      return false;
+    },
     setLoggedIn: function(value) {
-      alert("am ghere");
       this.loggedIn = value;
     },
     setRoomCode: function(value) {
       this.roomCode = value;
+      VueCookie.set("ROOM_CODE", value, { expires: "1D" });
     }
   }
 };
