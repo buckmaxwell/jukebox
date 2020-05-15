@@ -96,7 +96,6 @@ export default {
         return result;
       } else {
         this.$emit("deleteCookies");
-        this.$forceUpdate();
       }
     },
     getRoomCode: function() {
@@ -105,7 +104,6 @@ export default {
         return result;
       } else {
         this.$emit("deleteCookies");
-        this.$forceUpdate();
       }
     },
     queueSong: function() {
@@ -113,9 +111,9 @@ export default {
       let that = this;
       return this.$http
         .post(url, {
-          service: this.getService(),
+          service: that.getService(),
           uri: that.selectedSong.uri,
-          room_code: this.getRoomCode()
+          room_code: that.getRoomCode()
         })
         .then(function(response) {
           console.log(response);
