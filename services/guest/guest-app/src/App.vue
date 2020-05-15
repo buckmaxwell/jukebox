@@ -22,7 +22,6 @@
 <script>
 import RoomCodeForm from "./components/RoomCodeForm.vue";
 import SongSelect from "./components/SongSelect.vue";
-//import Main from "./components/Main.vue";
 import * as VueCookie from "vue-cookie";
 
 export default {

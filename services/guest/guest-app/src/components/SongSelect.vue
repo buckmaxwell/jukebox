@@ -71,6 +71,8 @@ const TYPEAHEAD_URL = `http://localhost:5001?service=:service&q=:q`;
 const PLAYER_URL = "http://localhost:5002";
 import _ from "underscore";
 import VueBootstrapTypeahead from "vue-bootstrap-typeahead";
+import * as VueCookie from "vue-cookie";
+
 export default {
   name: "SongSelect",
   components: {
@@ -88,14 +90,32 @@ export default {
     };
   },
   methods: {
+    getService: function() {
+      let result = VueCookie.get("SERVICE");
+      if (result) {
+        return result;
+      } else {
+        this.$emit("deleteCookies");
+        this.$forceUpdate();
+      }
+    },
+    getRoomCode: function() {
+      let result = VueCookie.get("ROOM_CODE");
+      if (result) {
+        return result;
+      } else {
+        this.$emit("deleteCookies");
+        this.$forceUpdate();
+      }
+    },
     queueSong: function() {
       let url = PLAYER_URL;
       let that = this;
       return this.$http
         .post(url, {
-          service: that.service,
+          service: this.getService(),
           uri: that.selectedSong.uri,
-          room_code: that.roomCode
+          room_code: this.getRoomCode()
         })
         .then(function(response) {
           console.log(response);
@@ -113,7 +133,7 @@ export default {
       //);
       let url = TYPEAHEAD_URL.replace(":q", query).replace(
         ":service",
-        this.service
+        this.getService()
       );
       let that = this;
       return this.$http
