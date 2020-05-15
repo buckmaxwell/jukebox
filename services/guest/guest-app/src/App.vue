@@ -4,23 +4,32 @@
       @setRoomCode="setRoomCode($event)"
       @setLoggedIn="setLoggedIn($event)"
       @setService="setService($event)"
+      @deleteCookies="deleteCookies($event)"
       :room-code="roomCode"
       :logged-in="loggedIn"
       :service="service"
       v-if="isLoggedIn() == false"
+    />
+    <SongSelect
+      @deleteCookies="deleteCookies($event)"
+      :service="service"
+      :room-code="roomCode"
+      v-if="isLoggedIn() == true"
     />
   </div>
 </template>
 
 <script>
 import RoomCodeForm from "./components/RoomCodeForm.vue";
+import SongSelect from "./components/SongSelect.vue";
 //import Main from "./components/Main.vue";
 import * as VueCookie from "vue-cookie";
 
 export default {
   name: "App",
   components: {
-    RoomCodeForm
+    RoomCodeForm,
+    SongSelect
   },
   data() {
     return {
@@ -30,6 +39,10 @@ export default {
     };
   },
   methods: {
+    deleteCookies: function() {
+      VueCookie.delete("SERVICE");
+      VueCookie.delete("ROOM_CODE");
+    },
     isLoggedIn: function() {
       if (VueCookie.get("ROOM_CODE")) {
         return true;

@@ -1,8 +1,9 @@
 <template>
   <div id="main">
+    <h1>hello</h1>
     <VueBootstrapTypeahead
       :data="songs"
-      v-model="addressSearch"
+      v-model="songSearch"
       size="lg"
       :serializer="s => s.text"
       placeholder="Type an address..."
@@ -12,25 +13,35 @@
 </template>
 
 <script>
-const API_URL = `http://localhost:5001?service=${this.service}&q=:q`;
+const API_URL = `http://localhost:5001?service=:service&q=:q`;
 import _ from "underscore";
 import VueBootstrapTypeahead from "vue-bootstrap-typeahead";
 export default {
   name: "SongSelect",
+  components: {
+    VueBootstrapTypeahead
+  },
+  props: {
+    service: String,
+    roomCode: String
+  },
   data() {
     return {
-      service: "",
       songs: [],
       songSearch: "",
-      roomCode: null,
       selectedSong: null
     };
   },
   methods: {
     async getSongs(query) {
-      const res = await fetch(API_URL.replace(":q", query));
-      const suggestions = await res.json();
-      this.songs = suggestions.suggestions;
+      //const res = await fetch(
+      //  API_URL.replace(":q", query).replace(":service", this.service)
+      //);
+      const resp = await fetch(
+        API_URL.replace(":q", query).replace(":service", this.service)
+      );
+      const suggestions = await resp.json();
+      this.songs = suggestions;
     }
   },
   watch: {
