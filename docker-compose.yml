@@ -1,6 +1,17 @@
 version: "3.7"
 
 services:
+  nginx:
+    build: ./services/nginx
+    volumes:
+      - ./services/nginx/guest-app/:/usr/src/app/
+    ports:
+      - 80:80
+    depends_on:
+      - room_settings
+      - typeahead
+      - player
+
   room_settings:
     build: ./services/room_settings
     volumes:
@@ -12,17 +23,6 @@ services:
     depends_on:
       - redis
       - rabbitmq
-
-  typeahead:
-    build: ./services/typeahead
-    volumes:
-      - ./services/typeahead/:/usr/src/app/
-    ports:
-      - 5001:5001
-    env_file:
-      - ./services/typeahead/.env.dev
-    depends_on:
-      - redis
 
   player:
     build: ./services/player

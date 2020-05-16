@@ -9,6 +9,7 @@ attrs==19.3.0
 black==19.10b0
 click==7.1.2
 git+https://github.com/buckmaxwell/jukebox.git@master#egg=async_messenger&subdirectory=lib/async_messenger
+gunicorn==20.0.4
 isort==4.3.21
 itsdangerous==1.1.0
 lazy-object-proxy==1.4.3
