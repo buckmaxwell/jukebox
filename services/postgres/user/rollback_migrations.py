@@ -11,7 +11,7 @@ DB_HOST = os.environ["DB_HOST"]
 DB_PORT = os.environ["DB_PORT"]
 
 
-migrations_dir_path = "/usr/src/app/authorizer/migrations"
+migrations_dir_path = "/usr/src/app/user/migrations"
 rollback_dir_path = os.path.join(migrations_dir_path, "rollback")
 rollback_dir = os.fsencode(rollback_dir_path)
 
@@ -26,7 +26,7 @@ conn = psycopg2.connect(
 cur = conn.cursor()
 cur.execute(
     """
-create table if not exists __authorizer_migrations__(
+create table if not exists __user_migrations__(
   id serial primary key,
   filename varchar,
   created_at timestamp default current_timestamp
@@ -38,7 +38,7 @@ cur.close()
 
 try:
     cur = conn.cursor()
-    cur.execute("select filename from __authorizer_migrations__ order by created_at desc limit 1")
+    cur.execute("select filename from __user_migrations__ order by created_at desc limit 1")
     last_run = cur.fetchone()[0]
 except Exception:
     last_run = "00000000000.pgsql"
@@ -72,7 +72,7 @@ for i, _file in enumerate(rollback_files):
             last_run = "00000000000.pgsql"
         # important that it is here in case migration fails
         cur = conn.cursor()
-        cur.execute("insert into __authorizer_migrations__(filename) values (%s)", (last_run,))
+        cur.execute("insert into __user_migrations__(filename) values (%s)", (last_run,))
         conn.commit()
         cur.close()
 
