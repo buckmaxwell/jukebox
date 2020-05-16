@@ -67,8 +67,8 @@
 
 
 <script>
-const TYPEAHEAD_URL = `http://localhost:5001?service=:service&q=:q`;
-const PLAYER_URL = "http://localhost:5002";
+const TYPEAHEAD_URL = `http://${process.env.API_HOST}/tracks?service=:service&q=:q`;
+const PLAYER_URL = `http://${process.env.API_HOST}/player`;
 import _ from "underscore";
 import VueBootstrapTypeahead from "vue-bootstrap-typeahead";
 import * as VueCookie from "vue-cookie";

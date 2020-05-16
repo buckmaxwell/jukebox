@@ -43,7 +43,7 @@ def spotify_play_song(request, authorization_id):
     )
 
 
-@app.route("/", methods=["POST"])
+@app.route("/player/", methods=["POST"])
 def play_song():
     room_code = request.get_json()[
         "room_code"

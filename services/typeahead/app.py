@@ -52,7 +52,7 @@ def spotify_search(request):
     return jsonify(formatted_dict)
 
 
-@app.route("/", methods=["GET"])
+@app.route("/tracks/", methods=["GET"])
 def search():
     return getattr(current_module, f"{request.args['service']}_search")(request)
 

@@ -7,6 +7,8 @@ services:
       - ./services/nginx/guest-app/:/usr/src/app/
     ports:
       - 80:80
+    env_file:
+      - ./services/room_settings/.env.prod
     depends_on:
       - room_settings
       - typeahead
@@ -17,8 +19,6 @@ services:
     command: gunicorn --bind 0.0.0.0:5000 app:app
     env_file:
       - ./services/room_settings/.env.prod
-    ports:
-      - 5000:5000
     depends_on:
       - redis
       - rabbitmq
@@ -26,8 +26,6 @@ services:
   player:
     build: ./services/player
     command: gunicorn --bind 0.0.0.0:5002 app:app
-    ports:
-      - 5002:5002
     env_file:
       - ./services/player/.env.prod
     depends_on:
@@ -36,8 +34,6 @@ services:
   typeahead:
     build: ./services/typeahead
     command: gunicorn --bind 0.0.0.0:5001 app:app
-    ports:
-      - 5001:5001
     env_file:
       - ./services/typeahead/.env.prod
     depends_on:

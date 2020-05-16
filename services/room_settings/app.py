@@ -41,14 +41,14 @@ def login_required(f):
                 return f(*args, **kwargs)
 
         if service_cookie == "spotify":
-            return redirect("/spotify-login", code=302)
+            return redirect("/host/spotify-login", code=302)
 
-        return redirect("/service-select", code=302)
+        return redirect("/host/service-select", code=302)
 
     return decorated_function
 
 
-@app.route("/")
+@app.route("/host/")
 @login_required
 def index():
     room_settings_cookie = request.cookies.get("ROOM_SETTINGS")
@@ -62,7 +62,7 @@ def index():
     return render_template("index.html", room_code=room_code)
 
 
-@app.route("/room/<room_code>", methods=["GET"])
+@app.route("/host/room/<room_code>", methods=["GET"])
 def public_room(room_code):
     if r.get(room_code.upper()) and r.get(f"{room_code.upper()}_service"):
         return (
@@ -77,7 +77,7 @@ def public_room(room_code):
     return jsonify({"error": "resource not found"}), 404
 
 
-@app.route("/encore", methods=["POST"])
+@app.route("/host/encore", methods=["POST"])
 @login_required
 def encore():
     room_settings_cookie = request.cookies.get("ROOM_SETTINGS")
@@ -91,12 +91,12 @@ def encore():
     return redirect(url_for("index"))
 
 
-@app.route("/service-select")
+@app.route("/host/service-select")
 def select_service():
-    return '<a href="/spotify-login">Authenticate with SPOTIFY</a>'
+    return '<a href="/host/spotify-login">Authenticate with SPOTIFY</a>'
 
 
-@app.route("/spotify-login")
+@app.route("/host/spotify-login")
 def spotify_login():
 
     state_key = str(uuid4())
@@ -113,7 +113,7 @@ def spotify_login():
     return redirect(new_url, code=302)
 
 
-@app.route("/spotify")
+@app.route("/host/spotify")
 def spotify():
     code = request.args.get("code")
     state = request.args.get("state")
@@ -139,7 +139,7 @@ def spotify():
             },
         )
 
-        response = make_response(redirect("/"))
+        response = make_response(redirect("/host/"))
         response.set_cookie("ROOM_SETTINGS", room_settings_cookie)
         response.set_cookie("SERVICE", "spotify")
         return response
