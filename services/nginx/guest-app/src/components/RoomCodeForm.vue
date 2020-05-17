@@ -70,7 +70,7 @@ export default {
     joinRoom: function() {
       let that = this;
       return this.$http
-        .get(`http://${process.env.API_HOST}/host/room/` + this.roomCode)
+        .get(`http://localhost/host/room/` + this.roomCode)
         .then(function(response) {
           console.log(response);
           that.$emit("setLoggedIn", true);
