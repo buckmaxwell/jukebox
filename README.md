@@ -1,5 +1,8 @@
 # jukebox
 
+
+
+
 ## Development
 
 ```sh
@@ -16,8 +19,6 @@ production mode try
 docker-compose -f docker-compose.prod.yml up --build
 ```
 
+once the app is running, 
 
-
-
-
-
+- Vist localhost
