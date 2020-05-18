@@ -1,13 +1,10 @@
-.vscode/
-.env*
-__pycache__/
-*.pyc
-*.egg-info/
-
 .DS_Store
 node_modules
 /dist
-auth_config.json
+
+# local env files
+.env.local
+.env.*.local
 
 # Log files
 npm-debug.log*

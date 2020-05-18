@@ -1,6 +1,7 @@
 #!/usr/bin/env/python3
 
 from db import Authorization, Session
+from time import sleep
 import arrow
 import async_messenger
 import json
@@ -76,13 +77,25 @@ def make_authorized_request(ch, method, properties, body):
 
 if __name__ == "__main__":
     parameters = pika.ConnectionParameters(
-        host="rabbitmq", retry_delay=0.25, connection_attempts=60
+        host="rabbitmq", retry_delay=1.0, connection_attempts=60
     )
-    connection = pika.BlockingConnection(parameters)
-    channel = connection.channel()
+    while True:
+        try:
+            connection = pika.BlockingConnection(parameters)
+            channel = connection.channel()
 
-    channel.queue_declare(queue=QUEUE)
-    channel.basic_qos(prefetch_count=1)
+            channel.queue_declare(queue=QUEUE)
+            channel.basic_qos(prefetch_count=1)
 
-    channel.basic_consume(QUEUE, make_authorized_request, auto_ack=False)
-    channel.start_consuming()
+            channel.basic_consume(QUEUE, make_authorized_request, auto_ack=False)
+            channel.start_consuming()
+        # Don't recover if connection was closed by broker
+        except pika.exceptions.ConnectionClosedByBroker as e:
+            raise e
+        # Don't recover on channel errors
+        except pika.exceptions.AMQPChannelError as e:
+            raise e
+        # Recover on all other connection errors
+        except pika.exceptions.AMQPConnectionError:
+            sleep(0.25)
+            continue

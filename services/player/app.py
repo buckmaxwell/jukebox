@@ -2,6 +2,7 @@
 
 from flask import Flask, request, jsonify
 from flask import redirect, make_response
+from flask_cors import CORS
 from functools import wraps
 import async_messenger
 import redis
@@ -12,6 +13,7 @@ import uuid
 current_module = sys.modules[__name__]
 
 app = Flask(__name__)
+CORS(app)
 
 r = redis.Redis(host="redis", port=6379, db=0, decode_responses=True)
 
@@ -41,7 +43,7 @@ def spotify_play_song(request, authorization_id):
     )
 
 
-@app.route("/", methods=["POST"])
+@app.route("/player/", methods=["POST"])
 def play_song():
     room_code = request.get_json()[
         "room_code"

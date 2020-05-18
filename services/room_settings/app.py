@@ -1,7 +1,8 @@
 #!/usr/bin/env/python3
 
-from flask import Flask, request, url_for
+from flask import Flask, request, url_for, jsonify
 from flask import redirect, make_response, render_template
+from flask_cors import CORS
 from functools import wraps
 from redis_wait import redis_wait
 from spotify_const import *
@@ -15,6 +16,7 @@ import urllib
 
 
 app = Flask(__name__)
+CORS(app)
 
 r = redis.Redis(host="redis", port=6379, db=0, decode_responses=True)
 
@@ -39,43 +41,62 @@ def login_required(f):
                 return f(*args, **kwargs)
 
         if service_cookie == "spotify":
-            return redirect("/spotify-login", code=302)
+            return redirect("/host/spotify-login", code=302)
 
-        return redirect("/service-select", code=302)
+        return redirect("/host/service-select", code=302)
 
     return decorated_function
 
 
-@app.route("/")
+@app.route("/host/")
 @login_required
 def index():
     room_settings_cookie = request.cookies.get("ROOM_SETTINGS")
+    service_cookie = request.cookies.get("SERVICE")
     room_code = r.get(f"{room_settings_cookie}_room_code")
     if room_code is None:
         room_code = "".join(random.choice(string.ascii_uppercase) for i in range(5))
         r.set(f"{room_settings_cookie}_room_code", room_code)
         r.set(room_code, r.get(room_settings_cookie), ex=60 * 60 * 24)
+        r.set(f"{room_code}_service", service_cookie, ex=60 * 60 * 24)
     return render_template("index.html", room_code=room_code)
 
 
-@app.route("/encore", methods=["POST"])
+@app.route("/host/room/<room_code>", methods=["GET"])
+def public_room(room_code):
+    if r.get(room_code.upper()) and r.get(f"{room_code.upper()}_service"):
+        return (
+            jsonify(
+                {
+                    "room_code": room_code,
+                    "service": r.get(f"{room_code.upper()}_service"),
+                }
+            ),
+            200,
+        )
+    return jsonify({"error": "resource not found"}), 404
+
+
+@app.route("/host/encore", methods=["POST"])
 @login_required
 def encore():
     room_settings_cookie = request.cookies.get("ROOM_SETTINGS")
+    service_cookie = request.cookies.get("SERVICE")
     room_code = r.get(f"{room_settings_cookie}_room_code")
     if room_code is None:
         room_code = "".join(random.choice(string.ascii_uppercase) for i in range(5))
         r.set(f"{room_settings_cookie}_room_code", room_code)
     r.set(room_code, r.get(room_settings_cookie), ex=60 * 60 * 24)
+    r.set(f"{room_code}_service", service_cookie, ex=60 * 60 * 24)
     return redirect(url_for("index"))
 
 
-@app.route("/service-select")
+@app.route("/host/service-select")
 def select_service():
-    return '<a href="/spotify-login">Authenticate with SPOTIFY</a>'
+    return '<a href="/host/spotify-login">Authenticate with SPOTIFY</a>'
 
 
-@app.route("/spotify-login")
+@app.route("/host/spotify-login")
 def spotify_login():
 
     state_key = str(uuid4())
@@ -92,7 +113,7 @@ def spotify_login():
     return redirect(new_url, code=302)
 
 
-@app.route("/spotify")
+@app.route("/host/spotify")
 def spotify():
     code = request.args.get("code")
     state = request.args.get("state")
@@ -118,7 +139,7 @@ def spotify():
             },
         )
 
-        response = make_response(redirect("/"))
+        response = make_response(redirect("/host/"))
         response.set_cookie("ROOM_SETTINGS", room_settings_cookie)
         response.set_cookie("SERVICE", "spotify")
         return response

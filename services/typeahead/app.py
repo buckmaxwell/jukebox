@@ -2,6 +2,7 @@
 
 from flask import Flask, request, jsonify
 from flask import redirect, make_response
+from flask_cors import CORS
 from functools import wraps
 import json
 import os
@@ -14,6 +15,7 @@ import urllib
 current_module = sys.modules[__name__]
 
 app = Flask(__name__)
+CORS(app)
 
 r = redis.Redis(host="redis", port=6379, db=0, decode_responses=True)
 
@@ -50,7 +52,7 @@ def spotify_search(request):
     return jsonify(formatted_dict)
 
 
-@app.route("/", methods=["GET"])
+@app.route("/tracks/", methods=["GET"])
 def search():
     return getattr(current_module, f"{request.args['service']}_search")(request)
 
