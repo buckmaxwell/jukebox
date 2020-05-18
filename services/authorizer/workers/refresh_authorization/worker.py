@@ -1,6 +1,7 @@
 #!/usr/bin/env/python3
 
 from db import Authorization, Session
+from time import sleep
 import arrow
 import json
 import os
@@ -79,4 +80,5 @@ if __name__ == "__main__":
             raise e
         # Recover on all other connection errors
         except pika.exceptions.AMQPConnectionError:
+            sleep(0.25)
             continue
