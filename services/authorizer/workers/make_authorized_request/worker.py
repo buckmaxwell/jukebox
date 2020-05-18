@@ -77,7 +77,7 @@ def make_authorized_request(ch, method, properties, body):
 
 if __name__ == "__main__":
     parameters = pika.ConnectionParameters(
-        host="rabbitmq", retry_delay=0.25, connection_attempts=60
+        host="rabbitmq", retry_delay=1.0, connection_attempts=60
     )
     while True:
         try:
