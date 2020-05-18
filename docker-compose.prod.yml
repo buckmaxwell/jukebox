@@ -2,7 +2,9 @@ version: "3.7"
 
 services:
   nginx:
-    build: ./services/nginx
+    build:
+      context: ./services/nginx
+      dockerfile: Dockerfile.prod
     volumes:
       - ./services/nginx/guest-app/:/usr/src/app/
     ports:

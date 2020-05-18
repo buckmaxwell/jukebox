@@ -1,8 +1,18 @@
 version: "3.7"
 
 services:
+  guest_app_dev:
+    build:
+      context: ./services/nginx/guest-app
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./services/nginx/guest-app/:/usr/src/app/
+    ports:
+      - 8080:8080
   nginx:
-    build: ./services/nginx
+    build:
+      context: ./services/nginx
+      dockerfile: Dockerfile.dev
     volumes:
       - ./services/nginx/guest-app/:/usr/src/app/
     ports:
