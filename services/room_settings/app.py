@@ -4,8 +4,8 @@ from flask import Flask, request, url_for, jsonify
 from flask import redirect, make_response, render_template
 from flask_cors import CORS
 from functools import wraps
-from redis_wait import redis_wait
-from spotify_const import *
+from .redis_wait import redis_wait
+from .spotify_const import *
 from uuid import uuid4
 import async_messenger
 import os
@@ -48,7 +48,7 @@ def login_required(f):
     return decorated_function
 
 
-@app.route("/host/")
+@app.route("/host/", methods=["GET"])
 @login_required
 def index():
     room_settings_cookie = request.cookies.get("ROOM_SETTINGS")
