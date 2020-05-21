@@ -5,7 +5,7 @@ from flask import redirect, make_response, render_template
 from flask_cors import CORS
 from functools import wraps
 from .redis_wait import redis_wait
-from uuid import uuid4
+import uuid
 import async_messenger
 import os
 import random
@@ -25,7 +25,7 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         room_settings_cookie = request.cookies.get("ROOM_SETTINGS")
         service_cookie = request.cookies.get("SERVICE")
-        job_id = str(uuid4())
+        job_id = str(uuid.uuid4())
         authorization_id = r.get(room_settings_cookie) if room_settings_cookie else None
         if authorization_id:
             async_messenger.send(
@@ -84,7 +84,7 @@ def select_service():
 @app.route("/host/spotify-login")
 def spotify_login():
 
-    state_key = str(uuid4())
+    state_key = str(uuid.uuid4())
     r.set(state_key, "1", ex=60 * 30)
     params = {
         "client_id": SPOTIFY_CLIENT_ID,
@@ -104,7 +104,7 @@ def spotify():
     state = request.args.get("state")
     error = request.args.get("error")
     if code is not None and r.get(state):
-        room_settings_cookie = str(uuid4())
+        room_settings_cookie = str(uuid.uuid4())
         async_messenger.send(
             "authorizer.create_authorization",
             {"code": code, "key": room_settings_cookie, "service": "spotify"},
@@ -128,7 +128,7 @@ def spotify():
         response.set_cookie("ROOM_SETTINGS", room_settings_cookie)
         response.set_cookie("SERVICE", "spotify")
         return response
-    return f"{error}: you are not logged in"
+    return jsonify({"error": f"{error}: you are not logged in"}), 400
 
 
 if __name__ == "__main__":

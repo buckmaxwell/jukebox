@@ -1,10 +1,12 @@
 from services.room_settings.app import (
     app,
-    redis,
     async_messenger,
-    random,
     login_required,
     r,
+    random,
+    redis,
+    uuid,
+    redis_wait,
 )
 from unittest.mock import MagicMock, patch
 from unittest import TestCase
@@ -153,13 +155,80 @@ class TestPublicRoomRoute(TestCase):
             assert resp.status_code == 405
 
 
-## /host/encore
-
-## /host/service-select
-
 ## /host/spotify-login
 
+
+## /host/service-select
+def test_get_service_select():
+    with app.test_client() as c:
+        resp = c.get("/host/service-select")
+        assert resp.status_code == 200
+        assert "/host/spotify-login" in str(resp.data)
+
+
 ## /host/spotify
+## /host
+# @patch.object(services.room_settings.redis_wait, "redis_wait", return_value=1)
+@patch.dict(
+    "os.environ",
+    {"SPOTIFY_REDIRECT_URI": "", "SPOTIFY_CLIENT_ID": "", "SPOTIFY_CLIENT_SECRET": ""},
+)
+@patch.object(uuid, "uuid4", return_value="xxx")
+@patch.object(redis.Redis, "get")
+@patch.object(async_messenger, "send")
+class TestSpotifyRoute(TestCase):
+    def test_get_spotify_happy_path(self, am_send, redis_get, uuid4):
+        gen = generator_from_list(["true", 1])
+
+        def state_exists(*args):
+            return next(gen)
+
+        redis_get.side_effect = state_exists
+        with app.test_client() as c:
+            resp = c.get(f"/host/spotify?code=thecode&state=thestate")
+            am_send.assert_any_call(
+                "authorizer.create_authorization",
+                {"code": "thecode", "key": "xxx", "service": "spotify"},
+            )
+            am_send.assert_any_call(
+                "authorizer.make_authorized_request",
+                {
+                    "http_verb": "get",
+                    "url": "https://api.spotify.com/v1/me",
+                    "authorization_id": 1,
+                    "queue": "user.find_or_create_user",
+                },
+            )
+            assert "/host/" in resp.headers["Location"]
+            assert "ROOM_SETTINGS=xxx" in str(resp.headers)
+            assert "SERVICE=spotify" in str(resp.headers)
+            assert resp.status_code == 302
+
+    def test_get_spotify_bad_state(self, am_send, redis_get, uuid4):
+        gen = generator_from_list([None])
+
+        def state_exists(*args):
+            return next(gen)
+
+        redis_get.side_effect = state_exists
+        with app.test_client() as c:
+            resp = c.get(f"/host/spotify?code=thecode&state=thestate")
+            am_send.assert_not_called()
+            assert "you are not logged in" in resp.json["error"]
+            assert resp.status_code == 400
+
+    def test_get_spotify_no_code(self, am_send, redis_get, uuid4):
+        gen = generator_from_list(["true", 1])
+
+        def state_exists(*args):
+            return next(gen)
+
+        redis_get.side_effect = state_exists
+        with app.test_client() as c:
+            resp = c.get(f"/host/spotify?state=thestate")
+            am_send.assert_not_called()
+            assert "you are not logged in" in resp.json["error"]
+            assert resp.status_code == 400
 
 
 # Other methods
