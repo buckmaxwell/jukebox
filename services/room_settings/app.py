@@ -5,7 +5,6 @@ from flask import redirect, make_response, render_template
 from flask_cors import CORS
 from functools import wraps
 from .redis_wait import redis_wait
-from .spotify_const import *
 from uuid import uuid4
 import async_messenger
 import os
@@ -147,4 +146,6 @@ def spotify():
 
 
 if __name__ == "__main__":
+    from .spotify_const import *
+
     app.run(host="0.0.0.0", port=5000, debug=True)
