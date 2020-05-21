@@ -147,6 +147,11 @@ class TestPublicRoomRoute(TestCase):
             assert resp.status_code == 404
             assert resp.json == {"error": "resource not found"}
 
+    def test_post_public_room(self, redis_get):
+        with app.test_client() as c:
+            resp = c.post("/host/room/ABCXY")
+            assert resp.status_code == 405
+
 
 ## /host/encore
 
