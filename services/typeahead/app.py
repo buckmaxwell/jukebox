@@ -3,6 +3,7 @@
 from flask import Flask, request, jsonify
 from flask import redirect, make_response
 from flask_cors import CORS
+from requests.exceptions import HTTPError
 from functools import wraps
 import json
 import os
@@ -37,6 +38,9 @@ def spotify_search_response_to_universal_format(resp_dict):
 
 def spotify_search(request):
     q = request.args["q"]
+    if not q:
+        return jsonify([])
+
     types = "track"
     cached = r.get(f"spotify_{q}_{types}")
     if cached:
@@ -54,7 +58,10 @@ def spotify_search(request):
 
 @app.route("/tracks/", methods=["GET"])
 def search():
-    return getattr(current_module, f"{request.args['service']}_search")(request)
+    try:
+        return getattr(current_module, f"{request.args['service']}_search")(request)
+    except (KeyError, AttributeError, HTTPError) as e:
+        return jsonify({"error": str(e)}), 400
 
 
 if __name__ == "__main__":

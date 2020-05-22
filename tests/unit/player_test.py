@@ -1,5 +1,5 @@
 from services.player.app import app, redis, async_messenger
-from services.player.app import spotify_play_song, uuid
+from services.player.app import spotify_play_song, uuid, spotify_request
 from unittest.mock import MagicMock, patch
 from unittest import TestCase
 import pytest
