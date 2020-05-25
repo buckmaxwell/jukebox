@@ -120,6 +120,8 @@ export default {
         })
         .catch(function(error) {
           console.log(error);
+          that.$emit("deleteCookies");
+          location.reload();
         });
     },
     songSerializer: function(song) {
@@ -141,10 +143,7 @@ export default {
           that.songs = response.data;
         })
         .catch(function(error) {
-          console.log("error");
           console.log(error);
-          console.log("error");
-          that.$emit("deleteCookies");
         });
     }
   },

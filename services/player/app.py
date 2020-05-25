@@ -4,11 +4,19 @@ from flask import Flask, request, jsonify
 from flask import redirect, make_response
 from flask_cors import CORS
 from functools import wraps
+from sentry_sdk.integrations.flask import FlaskIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
 import async_messenger
 import redis
+import sentry_sdk
 import sys
 import uuid
 
+
+sentry_sdk.init(
+    dsn="https://877d23fec9764314b6f0f15533ce1574@o398013.ingest.sentry.io/5253121",
+    integrations=[FlaskIntegration(), RedisIntegration()],
+)
 
 current_module = sys.modules[__name__]
 app = Flask(__name__)

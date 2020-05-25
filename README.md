@@ -6,11 +6,11 @@
 ## Development
 
 ```sh
-docker-compose up --build
+docker-compose -f docker-compose.dev.yml up --build
 ```
 then
 ```
-docker-compose down -v
+docker-compose -f docker-compose.dev.yml down -v
 ```
 some items differ in development and testing. To run the app in staging /
 production mode try

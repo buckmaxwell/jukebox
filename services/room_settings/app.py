@@ -4,20 +4,63 @@ from flask import Flask, request, url_for, jsonify
 from flask import redirect, make_response, render_template
 from flask_cors import CORS
 from functools import wraps
-from .redis_wait import redis_wait
-import uuid
+from sentry_sdk.integrations.flask import FlaskIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
+from time import sleep
 import async_messenger
 import os
 import random
 import redis
+import sentry_sdk
 import string
 import urllib
+import uuid
 
+sentry_sdk.init(
+    dsn="https://877d23fec9764314b6f0f15533ce1574@o398013.ingest.sentry.io/5253121",
+    integrations=[FlaskIntegration(), RedisIntegration()],
+)
+
+# Constants
+
+SPOTIFY_CLIENT_ID = os.environ["SPOTIFY_CLIENT_ID"]
+SPOTIFY_CLIENT_SECRET = os.environ["SPOTIFY_CLIENT_SECRET"]
+SPOTIFY_REDIRECT_URI = os.environ["SPOTIFY_REDIRECT_URI"]
+SPOTIFY_API_SCOPES = [
+    "playlist-modify-private",
+    "user-modify-playback-state",
+    "user-read-currently-playing",
+    "user-read-playback-state",
+    "streaming",
+    "app-remote-control",
+    "playlist-modify-public",
+    "playlist-read-collaborative",
+    "playlist-read-private",
+    "user-library-modify",
+    "user-library-read",
+    "user-read-email",
+    "user-read-recently-played",
+    "user-top-read",
+]
 
 app = Flask(__name__)
 CORS(app)
 
 r = redis.Redis(host="redis", port=6379, db=0, decode_responses=True)
+
+
+def redis_wait(
+    redis, key, time=15,
+):
+    sleep_time = 0.25
+    tries = int(time / sleep_time)
+    result = None
+    for _ in range(tries):
+        result = redis.get(key)
+        if result:
+            return result
+        sleep(0.25)
+    return result
 
 
 def login_required(f):
@@ -54,7 +97,9 @@ def index():
     service_cookie = request.cookies.get("SERVICE")
     room_code = r.get(f"{room_settings_cookie}_room_code")
     if room_code is None:
-        room_code = "".join(random.choice(string.ascii_uppercase) for i in range(5))
+        room_code = "".join(
+            random.choice(string.ascii_uppercase + string.digits) for i in range(4)
+        )
         r.set(f"{room_settings_cookie}_room_code", room_code)
         r.set(room_code, r.get(room_settings_cookie), ex=60 * 60 * 24)
         r.set(f"{room_code}_service", service_cookie, ex=60 * 60 * 24)
@@ -132,6 +177,5 @@ def spotify():
 
 
 if __name__ == "__main__":
-    from .spotify_const import *
 
     app.run(host="0.0.0.0", port=5000, debug=True)
