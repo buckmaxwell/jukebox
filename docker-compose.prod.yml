@@ -7,8 +7,8 @@ services:
       dockerfile: Dockerfile.prod
     volumes:
       - ./services/nginx/guest-app/:/usr/src/app/
-      - ./services/nginx/logs/access.log:/var/log/nginx/access.log
-      - ./services/nginx/logs/error.log:/var/log/nginx/error.log
+      - /var/log/nginx/access.log:/var/log/nginx/access.log
+      - /var/log/nginx/error.log:/var/log/nginx/error.log
     ports:
       - 80:80
     env_file:
