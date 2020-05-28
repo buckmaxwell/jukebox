@@ -48,7 +48,7 @@
           type="text"
           class="form-control col-sm-12"
           v-model="roomCode"
-          placeholder="ENTER 5 LETTER CODE"
+          placeholder="ENTER 4 CHARACTER CODE"
         />
         <br />
         <button type="button" class="btn btn-primary col-sm-12" v-on:click="joinRoom">JOIN ROOM</button>
