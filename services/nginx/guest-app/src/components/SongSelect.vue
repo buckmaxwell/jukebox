@@ -67,8 +67,8 @@
 
 
 <script>
-const TYPEAHEAD_URL = `http://earbud.club/tracks?service=:service&q=:q`;
-const PLAYER_URL = `http://earbud.club/player/`;
+const TYPEAHEAD_URL = `https://earbud.club/tracks?service=:service&q=:q`;
+const PLAYER_URL = `https://earbud.club/player/`;
 import _ from "underscore";
 import VueBootstrapTypeahead from "vue-bootstrap-typeahead";
 import * as VueCookie from "vue-cookie";
