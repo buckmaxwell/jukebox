@@ -2,41 +2,7 @@
   <div class="container">
     <div class="fixed-top">
       <nav class="navbar navbar-dark" style="background-color:#553C7B">
-        <h1>
-          <svg
-            class="bi bi-speaker"
-            width="1em"
-            height="1em"
-            viewBox="0 0 16 16"
-            fill="currentColor"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M9 4a1 1 0 11-2 0 1 1 0 012 0zm-2.5 6.5a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" />
-            <path
-              fill-rule="evenodd"
-              d="M4 0a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V2a2 2 0 00-2-2H4zm6 4a2 2 0 11-4 0 2 2 0 014 0zM8 7a3.5 3.5 0 100 7 3.5 3.5 0 000-7z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </h1>
         <img src="../assets/earbudclubimage.png" height="80px;" />
-        <h1>
-          <svg
-            class="bi bi-speaker"
-            width="1em"
-            height="1em"
-            viewBox="0 0 16 16"
-            fill="currentColor"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M9 4a1 1 0 11-2 0 1 1 0 012 0zm-2.5 6.5a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" />
-            <path
-              fill-rule="evenodd"
-              d="M4 0a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V2a2 2 0 00-2-2H4zm6 4a2 2 0 11-4 0 2 2 0 014 0zM8 7a3.5 3.5 0 100 7 3.5 3.5 0 000-7z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </h1>
       </nav>
     </div>
 
@@ -48,7 +14,7 @@
           type="text"
           class="form-control col-sm-12"
           v-model="roomCode"
-          placeholder="ENTER 5 LETTER CODE"
+          placeholder="ENTER 4 CHARACTER CODE"
         />
         <br />
         <button type="button" class="btn btn-primary col-sm-12" v-on:click="joinRoom">JOIN ROOM</button>
@@ -70,7 +36,7 @@ export default {
     joinRoom: function() {
       let that = this;
       return this.$http
-        .get(`http://localhost/host/room/` + this.roomCode)
+        .get(`https://earbud.club/host/room/` + this.roomCode)
         .then(function(response) {
           console.log(response);
           that.$emit("setLoggedIn", true);

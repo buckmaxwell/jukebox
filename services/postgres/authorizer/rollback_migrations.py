@@ -2,7 +2,12 @@
 
 import os
 import psycopg2
+import sentry_sdk
 import sys
+
+sentry_sdk.init(
+    "https://877d23fec9764314b6f0f15533ce1574@o398013.ingest.sentry.io/5253121"
+)
 
 DB_NAME = os.environ["DB_NAME"]
 DB_USER = os.environ["DB_USER"]
