@@ -31,7 +31,7 @@ def generator_from_list(lst):
 @patch.object(redis.Redis, "set")
 @patch.object(redis.Redis, "get")
 @patch.object(async_messenger, "send")
-@patch.object(services.room_settings.redis_wait, "redis_wait")
+@patch.object(services.room_settings.app, "redis_wait", return_value="1")
 class TestHostRoute(TestCase):
     def test_get_host(self, redis_wait, am_send, redis_get, redis_set, rand_choice):
         with app.test_client() as c:
@@ -43,7 +43,7 @@ class TestHostRoute(TestCase):
         self, redis_wait, am_send, redis_get, redis_set, rand_choice
     ):
 
-        gen = generator_from_list([1, 1, None, 1])
+        gen = generator_from_list([1, None, 1])
 
         def authorization_found_but_no_corresponding_room_code(*args):
             return next(gen)
@@ -53,11 +53,11 @@ class TestHostRoute(TestCase):
             c.set_cookie("localhost", "SERVICE", "spotify")
             c.set_cookie("localhost", "ROOM_SETTINGS", "xxx")
             resp = c.get("/host/")
-            redis_set.assert_any_call("xxx_room_code", "AAAAA")
-            redis_set.assert_any_call("AAAAA", 1, ex=60 * 60 * 24)
-            redis_set.assert_any_call("AAAAA_service", "spotify", ex=60 * 60 * 24)
+            redis_set.assert_any_call("xxx_room_code", "AAAA")
+            redis_set.assert_any_call("AAAA", 1, ex=60 * 60 * 24)
+            redis_set.assert_any_call("AAAA_service", "spotify", ex=60 * 60 * 24)
 
-            assert "AAAAA" in str(resp.data)
+            assert "AAAA" in str(resp.data)
             assert resp.status_code == 200
 
     def test_get_host_not_authorized_service_given(
@@ -171,11 +171,14 @@ def test_get_service_select():
 ## /host/spotify
 ## /host
 # @patch.object(services.room_settings.redis_wait, "redis_wait", return_value=1)
+some_uuid = uuid.uuid4()
+
+
 @patch.dict(
     "os.environ",
     {"SPOTIFY_REDIRECT_URI": "", "SPOTIFY_CLIENT_ID": "", "SPOTIFY_CLIENT_SECRET": ""},
 )
-@patch.object(uuid, "uuid4", return_value="xxx")
+@patch.object(uuid, "uuid4", return_value=some_uuid)
 @patch.object(redis.Redis, "get")
 @patch.object(async_messenger, "send")
 class TestSpotifyRoute(TestCase):
@@ -190,7 +193,7 @@ class TestSpotifyRoute(TestCase):
             resp = c.get(f"/host/spotify?code=thecode&state=thestate")
             am_send.assert_any_call(
                 "authorizer.create_authorization",
-                {"code": "thecode", "key": "xxx", "service": "spotify"},
+                {"code": "thecode", "key": str(some_uuid), "service": "spotify"},
             )
             am_send.assert_any_call(
                 "authorizer.make_authorized_request",
@@ -202,7 +205,7 @@ class TestSpotifyRoute(TestCase):
                 },
             )
             assert "/host/" in resp.headers["Location"]
-            assert "ROOM_SETTINGS=xxx" in str(resp.headers)
+            assert f"ROOM_SETTINGS={some_uuid}" in str(resp.headers)
             assert "SERVICE=spotify" in str(resp.headers)
             assert resp.status_code == 302
 
@@ -227,7 +230,7 @@ class TestSpotifyRoute(TestCase):
 
         redis_get.side_effect = state_exists
         with app.test_client() as c:
-            resp = c.get(f"/host/spotify?state=thestate")
+            resp = c.get("/host/spotify?state=thestate")
             am_send.assert_not_called()
             assert "you are not logged in" in resp.json["error"]
             assert resp.status_code == 400
