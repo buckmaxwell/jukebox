@@ -1,6 +1,6 @@
 # jukebox
 
-
+![](https://github.com/buckmaxwell/jukebox/workflows/build/badge.svg)
 
 
 ## Development
