@@ -33,3 +33,19 @@ jobs:
       - name: Test with pytest
         run: |
           pytest
+        env:
+          API_HOST: localhost
+          DB_HOST: postgres
+          DB_NAME: jukebox
+          DB_PASS: jukebox
+          DB_PORT: 5432
+          DB_USER: jukebox
+          NODE_ENV: development
+          PG_PASS: jukebox
+          PG_USER: jukebox
+          POSTGRES_DB: jukebox
+          POSTGRES_PASSWORD: jukebox
+          POSTGRES_USER: jukebox
+          SPOTIFY_CLIENT_ID: fakefakefake
+          SPOTIFY_CLIENT_SECRET: fakefakefake
+          SPOTIFY_REDIRECT_URI: http://localhost/host/spotify
