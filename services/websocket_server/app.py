@@ -29,7 +29,7 @@ socketio = SocketIO(app)
 #    send(username + " has left the room.", room=room)
 
 
-@app.route("/socket.io")
+@app.route("/socket.io/")
 def socket_home():
     return "socket home"
 
