@@ -3,13 +3,17 @@ import eventlet
 eventlet.monkey_patch()
 
 from flask import Flask, render_template
+from flask_cors import CORS
+
 
 from flask_socketio import SocketIO, join_room, leave_room, send, emit
 import os
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.environ["WSS_SECRET"]
+CORS(app)
+# app.config["SECRET_KEY"] = os.environ["WSS_SECRET"]
 socketio = SocketIO(app, message_queue="redis://redis:6379/")
+# socketio = SocketIO(app)
 
 
 @socketio.on("join")
