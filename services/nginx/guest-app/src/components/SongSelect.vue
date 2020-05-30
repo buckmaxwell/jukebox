@@ -54,10 +54,31 @@ export default {
     return {
       songs: [],
       songSearch: "",
-      selectedSong: null
+      selectedSong: null,
+      isConnected: false,
+      socketMessage: ""
     };
   },
+  sockets: {
+    connect() {
+      // Fired when the socket connects.
+      this.isConnected = true;
+    },
+
+    disconnect() {
+      this.isConnected = false;
+    },
+
+    // Fired when the server sends something on the "messageChannel" channel.
+    messageChannel(data) {
+      this.socketMessage = data;
+    }
+  },
   methods: {
+    pingServer() {
+      // Send the "pingServer" event to the server.
+      this.$socket.emit("pingServer", "PING!");
+    },
     getService: function() {
       let result = VueCookie.get("SERVICE");
       if (result) {
@@ -86,6 +107,9 @@ export default {
         .then(function(response) {
           console.log(response);
           that.songSearch = ""; // clear input
+          that.$socket
+            .to(that.getRoomCode())
+            .emit("song queued", { selected_song: that.selectedSong });
           that.flashMessage.success({
             title: "Hooray!",
             message: "Your song was queued."
@@ -125,7 +149,14 @@ export default {
       if (query) {
         this.getSongs(query);
       }
-    }, 500)
+    }, 500),
+
+    socketMessage: function(message) {
+      this.flashMessage.success({
+        title: "Someone just added...",
+        message: message.selected_song
+      });
+    }
   }
 };
 </script>

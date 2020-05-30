@@ -17,7 +17,8 @@
     "vue": "^2.6.11",
     "vue-axios": "^2.1.5",
     "vue-bootstrap-typeahead": "^0.2.6",
-    "vue-cookie": "^1.1.4"
+    "vue-cookie": "^1.1.4",
+    "vue-socket.io": "^3.0.9"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.3.0",

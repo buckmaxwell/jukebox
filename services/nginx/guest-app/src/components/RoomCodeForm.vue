@@ -29,8 +29,25 @@ export default {
   data() {
     return {
       roomCode: null,
-      service: null
+      service: null,
+      isConnected: false,
+      socketMessage: ""
     };
+  },
+  sockets: {
+    connect() {
+      // Fired when the socket connects.
+      this.isConnected = true;
+    },
+
+    disconnect() {
+      this.isConnected = false;
+    },
+
+    // Fired when the server sends something on the "messageChannel" channel.
+    messageChannel(data) {
+      this.socketMessage = data;
+    }
   },
   methods: {
     joinRoom: function() {
@@ -39,9 +56,21 @@ export default {
         .get(`https://earbud.club/host/room/` + this.roomCode)
         .then(function(response) {
           console.log(response);
+
           that.$emit("setLoggedIn", true);
           that.$emit("setRoomCode", response.data.room_code);
           that.$emit("setService", response.data.service);
+
+          that.$socket.emit("join", {
+            username:
+              Math.random()
+                .toString(36)
+                .substring(2, 15) +
+              Math.random()
+                .toString(36)
+                .substring(2, 15),
+            room: response.data.room_code
+          });
         })
         .catch(function(error) {
           console.log(error);
