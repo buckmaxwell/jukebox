@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   websocket_server:
-    image: ./services/websocket_server
+    build: ./services/websocket_server
     command: gunicorn --worker-class eventlet -w 1 app:app
     env_file:
       - ./.env.prod
