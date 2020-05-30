@@ -10,6 +10,8 @@ services:
     entrypoint:
       - python
       - app.py
+    ports:
+      - 5003:5003
 
   certbot:
     image: certbot/certbot
