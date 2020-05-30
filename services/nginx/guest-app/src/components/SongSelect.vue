@@ -85,6 +85,7 @@ export default {
         })
         .then(function(response) {
           console.log(response);
+          that.songSearch = ""; // clear input
           that.flashMessage.success({
             title: "Hooray!",
             message: "Your song was queued."
