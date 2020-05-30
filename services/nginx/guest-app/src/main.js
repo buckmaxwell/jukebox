@@ -6,6 +6,8 @@ import VueAxios from 'vue-axios'
 import axios from 'axios'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import * as VueCookie from 'vue-cookie'
+import FlashMessage from '@smartweb/vue-flash-message';
+
 
 
 Vue.config.productionTip = false
@@ -23,3 +25,5 @@ Vue.use(IconsPlugin)
 Vue.use(VueAxios, axios)
 
 Vue.use(VueCookie)
+
+Vue.use(FlashMessage);

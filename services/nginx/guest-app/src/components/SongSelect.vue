@@ -6,6 +6,8 @@
       </nav>
     </div>
 
+    <FlashMessage></FlashMessage>
+
     <h1>hello</h1>
     <VueBootstrapTypeahead
       :data="songs"
@@ -83,6 +85,10 @@ export default {
         })
         .then(function(response) {
           console.log(response);
+          that.flashMessage.success({
+            title: "Hooray!",
+            message: "Your song was queued."
+          });
         })
         .catch(function(error) {
           console.log(error);
