@@ -32,6 +32,6 @@ Vue.use(FlashMessage);
 
 Vue.use(new VueSocketIO({
   debug: true,
-  connection: SocketIO('https://earbud.club:1992')
+  connection: SocketIO('https://earbud.club/socket.io')
 })
 );
