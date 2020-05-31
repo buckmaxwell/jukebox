@@ -53,7 +53,7 @@ export default {
     joinRoom: function() {
       let that = this;
       return this.$http
-        .get(`https://earbud.club/host/room/` + this.roomCode)
+        .get(process.env.API_HOST + "/host/room/" + this.roomCode)
         .then(function(response) {
           console.log(response);
 
@@ -73,6 +73,7 @@ export default {
           });
         })
         .catch(function(error) {
+          console.log("BAD");
           console.log(error);
           that.$emit("deleteCookies");
         });

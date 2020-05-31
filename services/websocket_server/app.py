@@ -8,9 +8,8 @@ from flask_socketio import SocketIO, join_room, leave_room, send, emit
 import os
 
 app = Flask(__name__)
-CORS(app)
 app.config["SECRET_KEY"] = os.environ["WSS_SECRET"]
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 # socketio = SocketIO(app, message_queue="redis://redis:6379/")
 
 
@@ -28,16 +27,6 @@ def on_leave(data):
     room = data["room"]
     leave_room(room)
     send(username + " has left the room.", room=room)
-
-
-@app.route("/socket.io/")
-def socket_home():
-    return "socket home"
-
-
-@app.route("/")
-def index():
-    return "index"
 
 
 @socketio.on("message")

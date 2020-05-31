@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "serve": "API_HOST=http://localhost vue-cli-service serve",
+    "build": "API_HOST=https://earbud.club vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
