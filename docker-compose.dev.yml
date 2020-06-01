@@ -2,16 +2,15 @@ version: "3.7"
 
 services:
   websocket_server:
-    build: ./services/websocket_server
+    build:
+      context: ./services/websocket_server/app/
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./services/websocket_server/app/:/app/
     env_file:
       - ./.env.dev
-    depends_on:
-      - redis
-    entrypoint:
-      - python
-      - app.py
     ports:
-      - 5003:5003
+      - 8081:8081
 
   guest_app_dev:
     build:

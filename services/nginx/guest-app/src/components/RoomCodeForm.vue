@@ -52,8 +52,10 @@ export default {
   methods: {
     joinRoom: function() {
       let that = this;
+      console.log(process.env.VUE_APP_API_HOST);
+      console.log(process.env.VUE_APP_API_HOST + "/host/room/" + this.roomCode);
       return this.$http
-        .get(process.env.API_HOST + "/host/room/" + this.roomCode)
+        .get(process.env.VUE_APP_API_HOST + "/host/room/" + this.roomCode)
         .then(function(response) {
           console.log(response);
 
@@ -61,15 +63,8 @@ export default {
           that.$emit("setRoomCode", response.data.room_code);
           that.$emit("setService", response.data.service);
 
-          that.$socket.emit("join", {
-            username:
-              Math.random()
-                .toString(36)
-                .substring(2, 15) +
-              Math.random()
-                .toString(36)
-                .substring(2, 15),
-            room: response.data.room_code
+          that.$socket.emit("join_room", {
+            room_code: response.data.room_code
           });
         })
         .catch(function(error) {

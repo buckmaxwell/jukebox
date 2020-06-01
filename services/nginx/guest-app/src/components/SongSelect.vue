@@ -35,9 +35,8 @@
 
 
 <script>
-const TYPEAHEAD_URL =
-  `https://` + process.env.API_HOST + `/tracks?service=:service&q=:q`;
-const PLAYER_URL = `https://` + process.env.API_HOST + `/player/`;
+const TYPEAHEAD_URL = process.env.API_HOST + "/tracks?service=:service&q=:q";
+const PLAYER_URL = process.env.API_HOST + "/player/";
 import _ from "underscore";
 import VueBootstrapTypeahead from "vue-bootstrap-typeahead";
 import * as VueCookie from "vue-cookie";
@@ -76,10 +75,6 @@ export default {
     }
   },
   methods: {
-    pingServer() {
-      // Send the "pingServer" event to the server.
-      this.$socket.emit("pingServer", "PING!");
-    },
     getService: function() {
       let result = VueCookie.get("SERVICE");
       if (result) {
@@ -108,9 +103,15 @@ export default {
         .then(function(response) {
           console.log(response);
           that.songSearch = ""; // clear input
+          that.$socket.emit("song_queued", {
+            song: that.selectedSong,
+            room_code: that.getRoomCode()
+          });
+          /*
           that.$socket
             .to(that.getRoomCode())
             .emit("song queued", { selected_song: that.selectedSong });
+          */
           that.flashMessage.success({
             title: "Hooray!",
             message: "Your song was queued."
