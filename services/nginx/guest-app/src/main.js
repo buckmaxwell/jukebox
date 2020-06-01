@@ -9,7 +9,7 @@ import * as VueCookie from 'vue-cookie'
 import FlashMessage from '@smartweb/vue-flash-message';
 //import VueSocketIO from 'vue-socket.io'
 import VueSocketio from 'vue-socket.io'
-import SocketIO from "socket.io-client"
+//import SocketIO from "socket.io-client"
 
 
 
@@ -31,4 +31,4 @@ Vue.use(VueCookie)
 
 Vue.use(FlashMessage);
 
-Vue.use(VueSocketio, 'http://localhost:8081');
+Vue.use(VueSocketio, process.env.API_HOST + '/socket.io/');
