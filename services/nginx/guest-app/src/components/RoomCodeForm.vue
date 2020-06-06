@@ -36,7 +36,7 @@ export default {
     joinRoom: function() {
       let that = this;
       return this.$http
-        .get(`https://earbud.club/host/room/` + this.roomCode)
+        .get(process.env.VUE_APP_API_HOST + "/host/room/" + this.roomCode)
         .then(function(response) {
           console.log(response);
           that.$emit("setLoggedIn", true);
