@@ -29,7 +29,12 @@
         </div>
       </template>
     </VueBootstrapTypeahead>
-    <button type="button" class="btn btn-primary col-sm-12" v-on:click="queueSong">QUEUE THIS SONG</button>
+    <button
+      id="qsong"
+      type="button"
+      class="btn btn-primary col-sm-12"
+      v-on:click="queueSong"
+    >QUEUE THIS SONG</button>
   </div>
 </template>
 
@@ -145,10 +150,10 @@ button {
 a {
   font-family: "Arial", sans-serif;
 }
-button,
-button:hover,
-button:visited,
-button:active {
+#qsong,
+#qsong:hover,
+#qsong:visited,
+#qsong:active {
   margin-top: 20px;
   font-family: "Luckiest Guy", cursive;
   font-size: xx-large;

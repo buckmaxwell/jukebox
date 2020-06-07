@@ -1,22 +1,26 @@
 <template>
-  <div id="app">
-    <RoomCodeForm
-      @setRoomCode="setRoomCode($event)"
-      @setLoggedIn="setLoggedIn($event)"
-      @setService="setService($event)"
-      @deleteCookies="deleteCookies($event)"
-      :room-code="roomCode"
-      :logged-in="loggedIn"
-      :service="service"
-      v-if="isLoggedIn() == false"
-    />
-    <SongSelect
-      @deleteCookies="deleteCookies($event)"
-      :service="service"
-      :room-code="roomCode"
-      v-if="isLoggedIn() == true"
-    />
-  </div>
+<div id="app">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  </head>
+
+  <RoomCodeForm
+    @setRoomCode="setRoomCode($event)"
+    @setLoggedIn="setLoggedIn($event)"
+    @setService="setService($event)"
+    @deleteCookies="deleteCookies($event)"
+    :room-code="roomCode"
+    :logged-in="loggedIn"
+    :service="service"
+    v-if="isLoggedIn() == false"
+  />
+  <SongSelect
+    @deleteCookies="deleteCookies($event)"
+    :service="service"
+    :room-code="roomCode"
+    v-if="isLoggedIn() == true"
+  />
+</div>
 </template>
 
 <script>
