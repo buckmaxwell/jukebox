@@ -29,7 +29,7 @@ services:
     ports:
       - 5000:5000
     env_file:
-      - ./services/room_settings/.env.dev
+      - ./.env.dev
     depends_on:
       - redis
       - rabbitmq
@@ -41,7 +41,7 @@ services:
     ports:
       - 5002:5002
     env_file:
-      - ./services/player/.env.dev
+      - ./.env.dev
     depends_on:
       - redis
 
@@ -52,7 +52,7 @@ services:
     ports:
       - 5001:5001
     env_file:
-      - ./services/typeahead/.env.dev
+      - ./.env.dev
     depends_on:
       - redis
 
@@ -61,7 +61,7 @@ services:
     volumes:
       - ./services/authorizer/workers/make_authorized_request/:/usr/src/app/
     env_file:
-      - ./services/authorizer/workers/.env.dev
+      - ./.env.dev
     depends_on:
       - redis
       - rabbitmq
@@ -71,7 +71,7 @@ services:
     volumes:
       - ./services/authorizer/workers/create_authorization/:/usr/src/app/
     env_file:
-      - ./services/authorizer/workers/.env.dev
+      - ./.env.dev
     depends_on:
       - redis
       - rabbitmq
@@ -82,7 +82,7 @@ services:
     volumes:
       - ./services/authorizer/workers/refresh_authorization/:/usr/src/app/
     env_file:
-      - ./services/authorizer/workers/.env.dev
+      - ./.env.dev
     depends_on:
       - redis
       - rabbitmq
@@ -100,7 +100,7 @@ services:
   postgres:
     image: postgres:12
     env_file:
-      - ./services/postgres/.env.dev
+      - ./.env.dev
     volumes:
       - postgres-data:/var/lib/postgresql/data/
 
@@ -109,7 +109,7 @@ services:
     volumes:
       - ./services/postgres/:/usr/src/app/
     env_file:
-      - ./services/postgres/.env.dev
+      - ./.env.dev
     depends_on:
       - postgres
 

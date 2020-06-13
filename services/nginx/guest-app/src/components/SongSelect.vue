@@ -6,6 +6,8 @@
       </nav>
     </div>
 
+    <FlashMessage></FlashMessage>
+
     <h1>hello</h1>
     <VueBootstrapTypeahead
       :data="songs"
@@ -27,14 +29,21 @@
         </div>
       </template>
     </VueBootstrapTypeahead>
-    <button type="button" class="btn btn-primary col-sm-12" v-on:click="queueSong">QUEUE THIS SONG</button>
+    <button
+      id="qsong"
+      type="button"
+      class="btn btn-primary col-sm-12"
+      v-on:click="queueSong"
+    >QUEUE THIS SONG</button>
   </div>
 </template>
 
 
 <script>
-const TYPEAHEAD_URL = `https://earbud.club/tracks?service=:service&q=:q`;
-const PLAYER_URL = `https://earbud.club/player/`;
+const TYPEAHEAD_URL =
+  process.env.VUE_APP_API_HOST + "/tracks?service=:service&q=:q";
+const PLAYER_URL = process.env.VUE_APP_API_HOST + "/player/";
+
 import _ from "underscore";
 import VueBootstrapTypeahead from "vue-bootstrap-typeahead";
 import * as VueCookie from "vue-cookie";
@@ -83,6 +92,11 @@ export default {
         })
         .then(function(response) {
           console.log(response);
+          that.songSearch = ""; // clear input
+          that.flashMessage.success({
+            title: "Hooray!",
+            message: "Your song was queued."
+          });
         })
         .catch(function(error) {
           console.log(error);
@@ -136,10 +150,10 @@ button {
 a {
   font-family: "Arial", sans-serif;
 }
-button,
-button:hover,
-button:visited,
-button:active {
+#qsong,
+#qsong:hover,
+#qsong:visited,
+#qsong:active {
   margin-top: 20px;
   font-family: "Luckiest Guy", cursive;
   font-size: xx-large;
