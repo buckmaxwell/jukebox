@@ -3,8 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import NavBar from "./NavBar";
 import RoomCodeForm from "./RoomCodeForm";
-
-//import SongSelect from "./SongSelect";
+import SongSelect from "./SongSelect";
 
 
 class App extends React.Component {
@@ -27,8 +26,7 @@ class App extends React.Component {
     const isLoggedIn = this.state.roomCode;
     let body;
     if (isLoggedIn) {
-      //body = <SongSelect onLeaveRoom={this.handleLeaveRoom} />;
-      body = <h1>Howdy</h1>;
+      body = <SongSelect onLeaveRoom={this.handleLeaveRoom} />;
     } else {
       body = <RoomCodeForm onRoomJoined={this.handleRoomJoined} onLeaveRoom={this.handleLeaveRoom} />;
     }
