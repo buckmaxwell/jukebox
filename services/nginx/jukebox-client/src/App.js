@@ -24,14 +24,14 @@ class App extends React.Component {
   }
 
   render() {
-    //const isLoggedIn = this.state.roomCode;
+    const isLoggedIn = this.state.roomCode;
     let body;
-    //if (isLoggedIn) {
-    //  body = <SongSelect onLeaveRoom={this.handleLeaveRoom} />;
-    //} else {
-    //  body = <RoomCodeForm onRoomCodeSubmit={this.handleRoomCodeSubmission} />;
-    //}
-    body = <RoomCodeForm onRoomJoined={this.handleRoomJoined} />;
+    if (isLoggedIn) {
+      //body = <SongSelect onLeaveRoom={this.handleLeaveRoom} />;
+      body = <h1>Howdy</h1>;
+    } else {
+      body = <RoomCodeForm onRoomJoined={this.handleRoomJoined} onLeaveRoom={this.handleLeaveRoom} />;
+    }
 
     return (
       <div className="App">
