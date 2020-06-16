@@ -2,6 +2,9 @@ import React from 'react';
 import axios from 'axios';
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 
+import 'react-bootstrap-typeahead/css/Typeahead.css';
+import './SongSelect.css';
+
 class SongSelect extends React.Component {
   // do we need a constructor here?
   constructor(props) {
@@ -40,13 +43,31 @@ class SongSelect extends React.Component {
       <AsyncTypeahead
         id="song-search-typeahead"
         ref={ref}
+        className="input-group input-group-lg"
         isLoading={this.state.isLoading}
         labelKey={song => `${song.name} - ${song.artists.join(', ')}`}
         onSearch={this.handleGetSongs}
         options={this.state.songs}
-      //filterBy={(option, props) => {
-      /* Your own filtering code goes here. */
-      //}}
+        placeholder="Search songs or artists"
+        renderMenuItemChildren={(song, props) => (
+          <div>
+            <img
+              className="rounded"
+              alt={`${song.name} - ${song.artists.join(', ')}`}
+              src={song.album_art}
+              style={{
+                height: '50px',
+                marginRight: '10px',
+                width: '50px',
+              }}
+            />
+            <span className="ml-4">{`${song.name} - ${song.artists.join(', ')}`}</span>
+          </div>
+        )}
+        filterBy={(song, props) => {
+          /* Song filtering can happen server side only */
+          return song
+        }}
       />
     );
   }
