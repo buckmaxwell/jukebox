@@ -3,9 +3,12 @@ import axios from 'axios';
 import './RoomCodeForm.css';
 
 class RoomCodeForm extends React.Component {
+  // do we need a constructor here?
   constructor(props) {
     super(props);
     this.state = { value: '' };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   };
 
   handleChange(event) {
@@ -16,7 +19,7 @@ class RoomCodeForm extends React.Component {
     let that = this;
     axios.get(process.env.REACT_APP_API_HOST + "/host/room/" + this.state.value)
       .then(function (response) {
-        that.props.onRoomJoined(that.state.value);
+        that.props.onRoomJoined(response.data.room_code, response.data.service);
       })
       .catch(function (error) {
         console.log(error);
