@@ -26,7 +26,7 @@ class App extends React.Component {
     const isLoggedIn = this.state.roomCode && this.state.service;
     let body;
     if (isLoggedIn) {
-      body = <SongSelect onLeaveRoom={this.handleLeaveRoom} service={this.state.service} />;
+      body = <SongSelect onLeaveRoom={this.handleLeaveRoom} service={this.state.service} roomCode={this.state.roomCode} />;
     } else {
       body = <RoomCodeForm onRoomJoined={this.handleRoomJoined} onLeaveRoom={this.handleLeaveRoom} />;
     }

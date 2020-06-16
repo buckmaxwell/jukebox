@@ -1,5 +1,7 @@
 import React from 'react';
 import axios from 'axios';
+import { render } from 'react-dom';
+import FlashMessage from 'react-flash-message';
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 
 import 'react-bootstrap-typeahead/css/Typeahead.css';
@@ -11,7 +13,9 @@ class SongSelect extends React.Component {
     super(props);
     this.handleLeaveRoom = this.handleLeaveRoom.bind(this);
     this.handleGetSongs = this.handleGetSongs.bind(this);
+    this.queueSong = this.queueSong.bind(this);
     this.state = { selectedSong: null, isLoading: false, songs: [] };
+    this.songInput = React.createRef();
     this.TYPEAHEAD_URL =
       process.env.REACT_APP_API_HOST + "/tracks?service=:service&q=:q";
     this.PLAYER_URL = process.env.REACT_APP_API_HOST + "/player/";
@@ -19,6 +23,28 @@ class SongSelect extends React.Component {
 
   handleLeaveRoom() {
     this.props.onLeaveRoom();
+  }
+
+  queueSong() {
+    let that = this;
+    return axios.post(
+      that.PLAYER_URL, {
+      service: that.props.service,
+      uri: that.state.selectedSong.uri,
+      room_code: that.props.roomCode
+    }).then(function (response) {
+      console.log(response);
+      that.songInput.clear()
+      render(
+        <FlashMessage duration={5000} persistOnHover={true}>
+          <h2>Hooray!</h2>
+          <h2>Your song was queued.</h2>
+        </FlashMessage>
+      );
+    }).catch(function (error) {
+      console.log(error);
+      that.props.onLeaveRoom();
+    });
   }
 
   handleGetSongs(query) {
@@ -38,37 +64,46 @@ class SongSelect extends React.Component {
   }
 
   render() {
-    const ref = React.createRef();
     return (
-      <AsyncTypeahead
-        id="song-search-typeahead"
-        ref={ref}
-        className="input-group input-group-lg"
-        isLoading={this.state.isLoading}
-        labelKey={song => `${song.name} - ${song.artists.join(', ')}`}
-        onSearch={this.handleGetSongs}
-        options={this.state.songs}
-        placeholder="Search songs or artists"
-        renderMenuItemChildren={(song, props) => (
-          <div>
-            <img
-              className="rounded"
-              alt={`${song.name} - ${song.artists.join(', ')}`}
-              src={song.album_art}
-              style={{
-                height: '50px',
-                marginRight: '10px',
-                width: '50px',
-              }}
-            />
-            <span className="ml-4">{`${song.name} - ${song.artists.join(', ')}`}</span>
-          </div>
-        )}
-        filterBy={(song, props) => {
-          /* Song filtering can happen server side only */
-          return song
-        }}
-      />
+      <div className="SongSelect">
+        <AsyncTypeahead
+          id="song-search-typeahead"
+          ref={this.songInput}
+          className="input-group input-group-lg"
+          isLoading={this.state.isLoading}
+          labelKey={song => `${song.name} - ${song.artists.join(', ')}`}
+          onSearch={this.handleGetSongs}
+          onChange={songs => this.setState({ selectedSong: songs[0] })}
+          options={this.state.songs}
+          placeholder="Search songs or artists"
+          renderMenuItemChildren={(song, props) => (
+            <div>
+              <img
+                className="rounded"
+                alt={`${song.name} - ${song.artists.join(', ')}`}
+                src={song.album_art}
+                style={{
+                  height: '50px',
+                  marginRight: '10px',
+                  width: '50px',
+                }}
+              />
+              <span className="ml-4">{`${song.name} - ${song.artists.join(', ')}`}</span>
+            </div>
+          )}
+          filterBy={(song, props) => {
+            /* Song filtering can happen server side only */
+            return song
+          }}
+        />
+        <button
+          id="qsong"
+          type="button"
+          className="btn btn-primary col-sm-12"
+          onClick={this.queueSong}>
+          QUEUE THIS SONG
+        </button>
+      </div>
     );
   }
 }
