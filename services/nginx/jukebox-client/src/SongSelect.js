@@ -14,7 +14,7 @@ class SongSelect extends React.Component {
     this.handleGetSongs = this.handleGetSongs.bind(this);
     this.queueSong = this.queueSong.bind(this);
     this.state = { selectedSong: null, isLoading: false, songs: [] };
-    this.songInput = React.createRef();
+    //this.songInput = React.createRef();
     this.TYPEAHEAD_URL =
       process.env.REACT_APP_API_HOST + "/tracks?service=:service&q=:q";
     this.PLAYER_URL = process.env.REACT_APP_API_HOST + "/player/";
@@ -33,7 +33,7 @@ class SongSelect extends React.Component {
       room_code: that.props.roomCode
     }).then(function (response) {
       console.log(response);
-      //that.songInput.clear()
+      that.typeahead.clear();
       render(
         <FlashMessage duration={5000} persistOnHover={true}>
           <h2>Hooray!</h2>
@@ -68,7 +68,7 @@ class SongSelect extends React.Component {
       <div className="SongSelect">
         <AsyncTypeahead
           id="song-search-typeahead"
-          ref={this.songInput}
+          ref={typeahead => this.typeahead = typeahead}
           className="input-group input-group-lg"
           isLoading={this.state.isLoading}
           labelKey={song => `${song.name} - ${song.artists.join(', ')}`}
@@ -76,7 +76,6 @@ class SongSelect extends React.Component {
           onChange={songs => this.setState({ selectedSong: songs[0] })}
           options={this.state.songs}
           placeholder="Search songs or artists"
-          clearButton={true}
           renderMenuItemChildren={(song, props) => (
             <div>
               <img
