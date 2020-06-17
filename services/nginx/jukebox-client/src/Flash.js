@@ -5,12 +5,14 @@ import FlashMessage from "react-flash-message";
 
 class Flash extends React.Component {
   render() {
-    return (
-      <div className="container">
+    let body;
+    if (this.props.art && this.props.message) {
+      body = (
         <FlashMessage duration={5000}>
           <div className="flash">
 
             <img
+              alt=''
               className="rounded"
               src={this.props.art}
               style={{
@@ -23,6 +25,13 @@ class Flash extends React.Component {
 
           </div>
         </FlashMessage>
+      );
+    } else {
+      body = <div></div>
+    }
+    return (
+      <div className="container">
+        {body}
       </div>
     );
   }

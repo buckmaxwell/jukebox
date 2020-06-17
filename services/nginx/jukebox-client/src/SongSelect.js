@@ -32,7 +32,7 @@ class SongSelect extends React.Component {
     }).then(function (response) {
       console.log(response);
       that.typeahead.clear();
-      that.props.setFlashMessage(`${that.state.selectedSong.name} was queued!`, that.state.selectedSong.album_art)
+      that.props.setFlashMessage(that.state.selectedSong.name, that.state.selectedSong.album_art)
       window.location.reload(false);
     }).catch(function (error) {
       console.log(error);
