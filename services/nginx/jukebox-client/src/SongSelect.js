@@ -21,6 +21,39 @@ class SongSelect extends React.Component {
     this.PLAYER_URL = process.env.REACT_APP_API_HOST + "/player/";
   }
 
+  saveStateToLocalStorage() {
+    localStorage.setItem('__ebc_song_select__', JSON.stringify(this.state));
+  }
+
+  hydrateStateWithLocalStorage() {
+    console.log('here bru');
+    let stringState = localStorage.getItem('__ebc_song_select__') || '{}';
+    this.setState(
+      JSON.parse(stringState)
+    );
+  }
+
+  componentDidMount() {
+    this.hydrateStateWithLocalStorage();
+
+    // add event listener to save state to localStorage
+    // when user leaves/refreshes the page
+    window.addEventListener(
+      "beforeunload",
+      this.saveStateToLocalStorage.bind(this)
+    );
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener(
+      "beforeunload",
+      this.saveStateToLocalStorage.bind(this)
+    );
+
+    // saves if component has a chance to unmount
+    this.saveStateToLocalStorage();
+  }
+
   handleLeaveRoom() {
     this.props.onLeaveRoom();
   }
@@ -34,12 +67,13 @@ class SongSelect extends React.Component {
       room_code: that.props.roomCode
     }).then(function (response) {
       console.log(response);
-      that.songInput.clear()
+      //that.songInput.clear()
       render(
         <FlashMessage duration={5000} persistOnHover={true}>
           <h2>Hooray!</h2>
           <h2>Your song was queued.</h2>
-        </FlashMessage>
+        </FlashMessage>,
+        document.getElementById("flashContainer")
       );
     }).catch(function (error) {
       console.log(error);
@@ -76,6 +110,7 @@ class SongSelect extends React.Component {
           onChange={songs => this.setState({ selectedSong: songs[0] })}
           options={this.state.songs}
           placeholder="Search songs or artists"
+          clearButton={true}
           renderMenuItemChildren={(song, props) => (
             <div>
               <img
@@ -103,6 +138,7 @@ class SongSelect extends React.Component {
           onClick={this.queueSong}>
           QUEUE THIS SONG
         </button>
+        <div id="flashContainer"></div>
       </div>
     );
   }

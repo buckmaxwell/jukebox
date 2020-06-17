@@ -22,6 +22,39 @@ class App extends React.Component {
     this.setState({ roomCode: null, service: null });
   }
 
+  saveStateToLocalStorage() {
+    localStorage.setItem('__ebc_song_select__', JSON.stringify(this.state));
+  }
+
+  hydrateStateWithLocalStorage() {
+    console.log('here bru');
+    let stringState = localStorage.getItem('__ebc_song_select__') || '{}';
+    this.setState(
+      JSON.parse(stringState)
+    );
+  }
+
+  componentDidMount() {
+    this.hydrateStateWithLocalStorage();
+
+    // add event listener to save state to localStorage
+    // when user leaves/refreshes the page
+    window.addEventListener(
+      "beforeunload",
+      this.saveStateToLocalStorage.bind(this)
+    );
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener(
+      "beforeunload",
+      this.saveStateToLocalStorage.bind(this)
+    );
+
+    // saves if component has a chance to unmount
+    this.saveStateToLocalStorage();
+  }
+
   render() {
     const isLoggedIn = this.state.roomCode && this.state.service;
     let body;
