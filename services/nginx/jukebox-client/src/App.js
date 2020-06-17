@@ -27,7 +27,6 @@ class App extends React.Component {
   }
 
   hydrateStateWithLocalStorage() {
-    console.log('here bru');
     let stringState = localStorage.getItem('__ebc_song_select__') || '{}';
     this.setState(
       JSON.parse(stringState)
@@ -59,9 +58,9 @@ class App extends React.Component {
     const isLoggedIn = this.state.roomCode && this.state.service;
     let body;
     if (isLoggedIn) {
-      body = <SongSelect onLeaveRoom={this.handleLeaveRoom} service={this.state.service} roomCode={this.state.roomCode} />;
+      body = <SongSelect className="SongSelect" onLeaveRoom={this.handleLeaveRoom} service={this.state.service} roomCode={this.state.roomCode} />;
     } else {
-      body = <RoomCodeForm onRoomJoined={this.handleRoomJoined} onLeaveRoom={this.handleLeaveRoom} />;
+      body = <RoomCodeForm className="RoomCodeForm" onRoomJoined={this.handleRoomJoined} onLeaveRoom={this.handleLeaveRoom} />;
     }
 
     return (

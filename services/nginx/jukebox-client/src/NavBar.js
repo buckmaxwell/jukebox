@@ -16,14 +16,17 @@ class NavBar extends React.Component {
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
-            <Nav className="mr-auto">
+            <Nav className="mr-auto" activeKey="/">
               <Nav.Link href="#host">Host or Cohost</Nav.Link>
-              <Nav.Link href="#leaveRoom">Leave Room</Nav.Link>
+              <Nav.Link
+                eventKey="leaveRoom"
+                onSelect={this.props.onLeaveRoom}
+              >Leave Room</Nav.Link>
               <Nav.Link href="#troubleShooting">Trouble Shooting</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Navbar>
-      </div>
+      </div >
     );
   }
 }
