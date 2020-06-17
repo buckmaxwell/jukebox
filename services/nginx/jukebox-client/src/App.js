@@ -4,6 +4,7 @@ import './App.css';
 import NavBar from "./NavBar";
 import RoomCodeForm from "./RoomCodeForm";
 import SongSelect from "./SongSelect";
+import Flash from "./Flash";
 
 
 class App extends React.Component {
@@ -11,7 +12,8 @@ class App extends React.Component {
     super(props);
     this.handleRoomJoined = this.handleRoomJoined.bind(this);
     this.handleLeaveRoom = this.handleLeaveRoom.bind(this);
-    this.state = { roomCode: null, service: null };
+    this.setFlashMessage = this.setFlashMessage.bind(this);
+    this.state = { roomCode: null, service: null, flashMessage: null, flashAlbumArt: null };
   };
 
   handleRoomJoined(roomCode, service) {
@@ -54,11 +56,20 @@ class App extends React.Component {
     this.saveStateToLocalStorage();
   }
 
+  setFlashMessage(flashMessage, flashAlbumArt) {
+    this.setState({ flashMessage, flashAlbumArt });
+  }
+
   render() {
     const isLoggedIn = this.state.roomCode && this.state.service;
     let body;
     if (isLoggedIn) {
-      body = <SongSelect className="SongSelect" onLeaveRoom={this.handleLeaveRoom} service={this.state.service} roomCode={this.state.roomCode} />;
+      body = <SongSelect className="SongSelect"
+        onLeaveRoom={this.handleLeaveRoom}
+        service={this.state.service}
+        roomCode={this.state.roomCode}
+        setFlashMessage={this.setFlashMessage}
+      />;
     } else {
       body = <RoomCodeForm className="RoomCodeForm" onRoomJoined={this.handleRoomJoined} onLeaveRoom={this.handleLeaveRoom} />;
     }
@@ -68,6 +79,7 @@ class App extends React.Component {
         <NavBar onLeaveRoom={this.handleLeaveRoom} />
         <div className="container">
           {body}
+          <Flash message={this.state.flashMessage} art={this.state.flashAlbumArt} />
         </div>
       </div>
     );

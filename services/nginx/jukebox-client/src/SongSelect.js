@@ -1,7 +1,5 @@
 import React from 'react';
 import axios from 'axios';
-import { render } from 'react-dom';
-import FlashMessage from 'react-flash-message';
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 //import 'react-bootstrap-typeahead/css/Typeahead.css';
 import './SongSelect.css';
@@ -34,13 +32,8 @@ class SongSelect extends React.Component {
     }).then(function (response) {
       console.log(response);
       that.typeahead.clear();
-      render(
-        <FlashMessage duration={5000} persistOnHover={true}>
-          <h2>Hooray!</h2>
-          <h2>Your song was queued.</h2>
-        </FlashMessage>,
-        document.getElementById("flashContainer")
-      );
+      that.props.setFlashMessage(`${that.state.selectedSong.name} was queued!`, that.state.selectedSong.album_art)
+      window.location.reload(false);
     }).catch(function (error) {
       console.log(error);
       that.props.onLeaveRoom();
