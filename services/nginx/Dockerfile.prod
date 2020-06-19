@@ -1,9 +1,9 @@
 FROM node:latest as build-stage
 WORKDIR /usr/src/app
-COPY ./guest-app/package*.json ./
+COPY ./jukebox-client/package*.json ./
 
 RUN npm install
-COPY ./guest-app .
+COPY ./jukebox-client .
 RUN npm run build
 
 FROM nginx as production-stage

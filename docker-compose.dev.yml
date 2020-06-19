@@ -3,18 +3,22 @@ version: "3.7"
 services:
   guest_app_dev:
     build:
-      context: ./services/nginx/guest-app
+      context: ./services/nginx/jukebox-client
       dockerfile: Dockerfile.dev
     volumes:
-      - ./services/nginx/guest-app/:/usr/src/app/
+      - ./services/nginx/jukebox-client/:/usr/src/app/
+      - ./services/nginx/jukebox-client/node_modules/:/usr/src/app/node_modules
     ports:
-      - 8080:8080
+      - 3000:3000
+    env_file:
+      - ./.env.dev
+    stdin_open: true
   nginx:
     build:
       context: ./services/nginx
       dockerfile: Dockerfile.dev
     volumes:
-      - ./services/nginx/guest-app/:/usr/src/app/
+      - ./services/nginx/jukebox-client/:/usr/src/app/
     ports:
       - 80:80
     depends_on:

@@ -13,7 +13,7 @@ services:
       context: ./services/nginx
       dockerfile: Dockerfile.prod
     volumes:
-      - ./services/nginx/guest-app/:/usr/src/app/
+      - ./services/nginx/jukebox-client/:/usr/src/app/
       - /var/log/nginx/access.log:/var/log/nginx/access.log
       - /var/log/nginx/error.log:/var/log/nginx/error.log
       - ./data/certbot/conf:/etc/letsencrypt

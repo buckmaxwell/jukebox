@@ -17,7 +17,7 @@ class NavBar extends React.Component {
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="mr-auto" activeKey="/">
-              <Nav.Link href="#host">Host or Cohost</Nav.Link>
+              <Nav.Link href="/host">Host or Cohost</Nav.Link>
               <Nav.Link
                 eventKey="leaveRoom"
                 onSelect={this.props.onLeaveRoom}
