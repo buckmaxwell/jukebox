@@ -2,6 +2,9 @@ FROM node:latest as build-stage
 WORKDIR /usr/src/app
 COPY ./jukebox-client/package*.json ./
 
+ARG REACT_APP_API_HOST
+ENV REACT_APP_API_HOST=$REACT_APP_API_HOST
+
 RUN npm install
 COPY ./jukebox-client .
 RUN npm run build
