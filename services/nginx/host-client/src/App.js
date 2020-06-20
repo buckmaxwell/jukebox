@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import { createBrowserHistory } from 'history';
 
+// TODO: is this necessary, what does it do
 export const history = createBrowserHistory({
   basename: process.env.PUBLIC_URL
 });
@@ -13,7 +14,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload bro.
+          Edit <code>src/App.js</code> and save to reload bruhhh.
         </p>
         <a
           className="App-link"
