@@ -93,10 +93,10 @@ def login_required(f):
 @app.route("/host/", methods=["GET"])
 @login_required
 def index():
-    room_settings_cookie = request.cookies.get("ROOM_SETTINGS")
-    service_cookie = request.cookies.get("SERVICE")
-    room_code = r.get(f"{room_settings_cookie}_room_code")
-    if room_code is None:
+    user_external_id = request.args.get("user")
+    service = request.args.get("service")
+    user_id = r.get(user_external_id)
+    if user_id is None:
         room_code = "".join(
             random.choice(string.ascii_uppercase + string.digits) for i in range(4)
         )
