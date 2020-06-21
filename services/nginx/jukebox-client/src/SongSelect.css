@@ -1,0 +1,20 @@
+@import url("https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Permanent+Marker&display=swap");
+h1 {
+  color: #ffffff;
+}
+input.songSelect,
+label {
+  font-family: "Luckiest Guy", cursive;
+  font-size: xx-large;
+}
+input.songSelect {
+  padding: 20px 12px;
+  background-color: #e0e0e0;
+  color: #000;
+  border: 0 solid;
+  border-radius: 12px;
+  box-shadow: none;
+}
+.SongSelect {
+  margin-top: 60px;
+}

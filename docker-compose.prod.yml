@@ -1,7 +1,113 @@
 version: "3.7"
 
 services:
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+  nginx:
+    build:
+      context: ./services/nginx
+      dockerfile: Dockerfile.prod
+    volumes:
+      - ./services/nginx/jukebox-client/:/usr/src/app/
+      - /var/log/nginx/access.log:/var/log/nginx/access.log
+      - /var/log/nginx/error.log:/var/log/nginx/error.log
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    ports:
+      - 80:80
+      - 443:443
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - room_settings
+      - typeahead
+      - player
+    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+
   room_settings:
+    build: ./services/room_settings
     command: gunicorn --bind 0.0.0.0:5000 app:app
     env_file:
-      - ./services/room_settings/.env.prod
+      - ./.env.prod
+    depends_on:
+      - redis
+      - rabbitmq
+
+  player:
+    build: ./services/player
+    command: gunicorn --bind 0.0.0.0:5002 app:app
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - redis
+
+  typeahead:
+    build: ./services/typeahead
+    command: gunicorn --bind 0.0.0.0:5001 app:app
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - redis
+
+  make_authorized_request:
+    build: ./services/authorizer/workers/make_authorized_request
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - redis
+      - rabbitmq
+
+  create_authorization:
+    build: ./services/authorizer/workers/create_authorization
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - redis
+      - rabbitmq
+      - postgres
+
+  refresh_authorization:
+    build: ./services/authorizer/workers/refresh_authorization
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - redis
+      - rabbitmq
+      - postgres
+
+  redis:
+    image: redis:6
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+
+  rabbitmq:
+    hostname: rabbitmq
+    image: rabbitmq:3-management
+    env_file:
+      - ./.env.prod
+    ports:
+      - 15672:15672
+
+  postgres:
+    image: postgres:12
+    env_file:
+      - ./.env.prod
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/
+
+  pgmanager:
+    build: ./services/postgres
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - postgres
+
+volumes:
+  postgres-data:
+  redis-data:
