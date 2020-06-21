@@ -60,7 +60,7 @@ def create_spotify_authorization(external_authorization_id, code):
     return authorization_id
 
 
-def find_or_create_spotify_user(external_user_id, authorization_id):
+def find_or_create_spotify_user(ebc_host_id, authorization_id):
     async_messenger.send(
         "authorizer.make_authorized_request",
         {
@@ -68,10 +68,10 @@ def find_or_create_spotify_user(external_user_id, authorization_id):
             "url": "https://api.spotify.com/v1/me",
             "authorization_id": authorization_id,
             "queue": "user.find_or_create_user",
-            "kwargs": {"external_user_id": external_user_id},
+            "kwargs": {"ebc_host_id": ebc_host_id},
         },
     )
-    user_id = redis_wait(r, external_user_id)
+    user_id = redis_wait(r, ebc_host_id)
     if not user_id:
         raise TimeoutError("L9RBU")
     return user_id
@@ -91,33 +91,6 @@ def redis_wait(
     return result
 
 
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        room_settings_cookie = request.cookies.get("ROOM_SETTINGS")
-        service_cookie = request.cookies.get("SERVICE")
-        job_id = str(uuid.uuid4())
-        authorization_id = r.get(room_settings_cookie) if room_settings_cookie else None
-        if authorization_id:
-            async_messenger.send(
-                "authorizer.refresh_authorization",
-                {
-                    "authorization_id": authorization_id,
-                    "job_id": job_id,
-                    "service": service_cookie,
-                },
-            )
-            if redis_wait(r, job_id):
-                return f(*args, **kwargs)
-
-        if service_cookie == "spotify":
-            return redirect("/host/spotify-login", code=302)
-
-        return redirect("/host/service-select", code=302)
-
-    return decorated_function
-
-
 @app.route("/host/room/<room_code>", methods=["GET"])
 def public_room(room_code):
     if r.get(room_code.upper()) and r.get(f"{room_code.upper()}_service"):
@@ -131,6 +104,32 @@ def public_room(room_code):
             200,
         )
     return jsonify({"error": "resource not found"}), 404
+
+
+@app.route("/host/refresh-login")
+def refresh_login():
+    try:
+        ebc_host_auth = request.cookies.get("EBC_HOST_AUTH")
+        service = request.cookies.get("EBC_HOST_SERVICE")
+
+        job_id = str(uuid.uuid4())
+        authorization_id = r.get(ebc_host_auth) if ebc_host_auth else None
+        if authorization_id:
+            async_messenger.send(
+                "authorizer.refresh_authorization",
+                {
+                    "authorization_id": authorization_id,
+                    "job_id": job_id,
+                    "service": service,
+                },
+            )
+            if not redis_wait(r, job_id):
+                raise TimeoutError("L9RBU")
+            return "", 204
+        else:
+            return jsonify({"error": f"{e}: authorization not found"}), 404
+    except (KeyError, TimeoutError) as e:
+        return jsonify({"error": f"{e}: could not refresh"}), 400
 
 
 @app.route("/host/spotify-login")
@@ -149,7 +148,7 @@ def spotify_login():
     return redirect(new_url, code=302)
 
 
-@app.route("/host/spotify/callback")
+@app.route("/host/spotify")
 def spotify():
     code = request.args.get("code")
     state = request.args.get("state")
@@ -157,12 +156,13 @@ def spotify():
     if code is not None and r.get(state):
 
         external_auth_id = str(uuid.uuid4())
-        external_user_id = str(uuid.uuid4())
+        ebc_host_id = str(uuid.uuid4())
         auth_id = create_spotify_authorization(external_auth_id, code)
-        _ = find_or_create_spotify_user(external_user_id, auth_id)
+        _ = find_or_create_spotify_user(ebc_host_id, auth_id)
 
         response = make_response(redirect("/rooms/"))
-        response.set_cookie("EBC_HOST_ID", external_user_id)
+        response.set_cookie("EBC_HOST_ID", ebc_host_id, max_age=60 * 60 * 24 * 7)
+        response.set_cookie("EBC_HOST_AUTH", external_auth_id, max_age=60 * 60 * 24 * 7)
         response.set_cookie("EBC_HOST_SERVICE", "spotify")
         return response
     return jsonify({"error": f"{error}: you are not logged in"}), 400

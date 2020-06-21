@@ -20,6 +20,7 @@ class User(Base):
 
     profile = Column(JSON)
     email = Column(String(250))
+    service_key = Column(String(250))
     service = Column(String(250))
 
     created_at = Column(DateTime)

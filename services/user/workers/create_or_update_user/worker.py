@@ -4,33 +4,45 @@ from db import User, Session
 import json
 import pika
 import sys
+import redis
 
 current_module = sys.modules[__name__]
 
 session = Session()
+r = redis.Redis(host="redis", port=6379, db=0, decode_responses=True)
 
 
 QUEUE = "user.create_or_update_user"
 
-def spotify_email_fetcher(profile):
-    return profile["body"]["email"]
+
+def spotify_email(profile):
+    return profile["email"]
+
+
+def spotify_service_key(profile):
+    return profile["id"]
 
 
 def create_or_update_user_helper(profile, service):
 
-    email = getattr(current_module, f"{service}_email_fetcher")(profile)
+    email = getattr(current_module, f"{service}_email")(profile)
+    service_key = getattr(current_module, f"{service}_service_key")(profile)
 
     try:
-        user = session.query(User).filter(User.email == email).filter(User.service == service).one()
+        user = (
+            session.query(User)
+            .filter(User.service_key == service_key)
+            .filter(User.service == service)
+            .one()
+        )
     except:
         user = User(
-            email=email,
-            service=service,
-            profile=profile
+            email=email, service=service, service_key=service_key, profile=profile,
         )
 
     session.add(user)
     session.commit()
+    return user.id
 
 
 def create_or_update_user(ch, method, properties, body):
@@ -38,8 +50,11 @@ def create_or_update_user(ch, method, properties, body):
     request = json.loads(body.decode())
     profile = request["body"]
     service = request["service"]
+    ebc_host_id = request["ebc_host_id"]
 
-    create_or_update_user_helper(profile, service)
+    user_id = create_or_update_user_helper(profile, service)
+
+    r.set(ebc_host_id, user_id)
 
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
