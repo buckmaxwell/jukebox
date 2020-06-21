@@ -44,8 +44,9 @@ def record_key_response_helper(resp_dict, key, expires_in):
     r.set(key, json.dumps(resp_dict), ex=expires_in)
 
 
-def record_queue_response_helper(resp_dict, queue):
-    async_messenger.send(queue, resp_dict)
+def record_queue_response_helper(resp_dict, queue, kwargs):
+    merged_dict = {**kwargs, **resp_dict}
+    async_messenger.send(queue, merged_dict)
 
 
 def response_to_dict(resp, service):
@@ -68,6 +69,7 @@ def make_authorized_request(ch, method, properties, body):
     service = authorization.service
 
     queue = request.get("queue")
+    kwargs = request.get("kwargs", {})
     key, expires_in = None, None
     if queue is None:
         key = request["key"]
@@ -77,7 +79,7 @@ def make_authorized_request(ch, method, properties, body):
     resp_dict = response_to_dict(resp, service)
 
     record_queue_response_helper(
-        resp_dict, queue
+        resp_dict, queue, kwargs
     ) if queue else record_key_response_helper(resp_dict, key, expires_in)
 
     ch.basic_ack(delivery_tag=method.delivery_tag)

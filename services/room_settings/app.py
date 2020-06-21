@@ -68,7 +68,7 @@ def find_or_create_spotify_user(external_user_id, authorization_id):
             "url": "https://api.spotify.com/v1/me",
             "authorization_id": authorization_id,
             "queue": "user.find_or_create_user",
-            "args": {"external_user_id": external_user_id},
+            "kwargs": {"external_user_id": external_user_id},
         },
     )
     user_id = redis_wait(r, external_user_id)
