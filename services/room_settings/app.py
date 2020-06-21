@@ -61,6 +61,7 @@ def create_spotify_authorization(external_authorization_id, code):
 
 
 def find_or_create_spotify_user(ebc_host_id, authorization_id):
+    ebc_host_user = f"{ebc_host_id}_user"
     async_messenger.send(
         "authorizer.make_authorized_request",
         {
@@ -68,10 +69,10 @@ def find_or_create_spotify_user(ebc_host_id, authorization_id):
             "url": "https://api.spotify.com/v1/me",
             "authorization_id": authorization_id,
             "queue": "user.find_or_create_user",
-            "kwargs": {"ebc_host_id": ebc_host_id},
+            "kwargs": {"ebc_host_user": ebc_host_user},
         },
     )
-    user_id = redis_wait(r, ebc_host_id)
+    user_id = redis_wait(r, ebc_host_user)
     if not user_id:
         raise TimeoutError("L9RBU")
     return user_id
@@ -109,8 +110,9 @@ def public_room(room_code):
 @app.route("/host/refresh-login")
 def refresh_login():
     try:
-        ebc_host_auth = request.cookies.get("EBC_HOST_AUTH")
-        service = request.cookies.get("EBC_HOST_SERVICE")
+        ebc_host_id = request.cookies["EBC_HOST_ID"]
+        ebc_host_auth = f"{ebc_host_id}_auth"
+        service = request.cookies["EBC_HOST_SERVICE"]
 
         job_id = str(uuid.uuid4())
         authorization_id = r.get(ebc_host_auth) if ebc_host_auth else None
@@ -159,10 +161,10 @@ def spotify():
         ebc_host_id = str(uuid.uuid4())
         auth_id = create_spotify_authorization(external_auth_id, code)
         _ = find_or_create_spotify_user(ebc_host_id, auth_id)
+        r.set(f"{ebc_host_id}_auth", auth_id)
 
         response = make_response(redirect("/rooms/"))
         response.set_cookie("EBC_HOST_ID", ebc_host_id, max_age=60 * 60 * 24 * 7)
-        response.set_cookie("EBC_HOST_AUTH", external_auth_id, max_age=60 * 60 * 24 * 7)
         response.set_cookie("EBC_HOST_SERVICE", "spotify")
         return response
     return jsonify({"error": f"{error}: you are not logged in"}), 400

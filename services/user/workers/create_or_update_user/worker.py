@@ -50,11 +50,11 @@ def create_or_update_user(ch, method, properties, body):
     request = json.loads(body.decode())
     profile = request["body"]
     service = request["service"]
-    ebc_host_id = request["ebc_host_id"]
+    ebc_host_user = request["ebc_host_user"]
 
     user_id = create_or_update_user_helper(profile, service)
 
-    r.set(ebc_host_id, user_id)
+    r.set(ebc_host_user, user_id)
 
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
