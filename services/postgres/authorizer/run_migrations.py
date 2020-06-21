@@ -40,7 +40,9 @@ cur.close()
 
 try:
     cur = conn.cursor()
-    cur.execute("select filename from __authorizer_migrations__ order by created_at desc limit 1")
+    cur.execute(
+        "select filename from __authorizer_migrations__ order by created_at desc limit 1"
+    )
     last_run = cur.fetchone()[0]
 except Exception as e:
     last_run = "00000000000.pgsql"
@@ -50,14 +52,16 @@ for _file in sorted(os.listdir(change_dir)):
     if filename.endswith(".pgsql") and filename > last_run:
         print("Running migration {}...".format(filename))
         cur = conn.cursor()
-        cur.execute(open(os.path.join(change_dir_path, filename), "r").read())
+        cur.execute(open(os.path.join(change_dir_path, filename), "r").read().strip())
         conn.commit()
         cur.close()
 
         last_run = filename
         # important that it is here in case migration fails
         cur = conn.cursor()
-        cur.execute("insert into __authorizer_migrations__(filename) values (%s)", (last_run,))
+        cur.execute(
+            "insert into __authorizer_migrations__(filename) values (%s)", (last_run,)
+        )
         conn.commit()
         cur.close()
 

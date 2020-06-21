@@ -68,7 +68,7 @@ def find_or_create_spotify_user(ebc_host_id, authorization_id):
             "http_verb": "get",
             "url": "https://api.spotify.com/v1/me",
             "authorization_id": authorization_id,
-            "queue": "user.find_or_create_user",
+            "queue": "user.create_or_update_user",
             "kwargs": {"ebc_host_user": ebc_host_user},
         },
     )

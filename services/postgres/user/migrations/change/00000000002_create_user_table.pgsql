@@ -1,4 +1,4 @@
-CREATE TABLE user.users (
+CREATE TABLE _user.users (
   id serial PRIMARY KEY,
   email varchar,
   service_key varchar, -- the external id assigned by the service

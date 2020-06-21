@@ -1,1 +1,2 @@
-create schema authorizer; 
+CREATE SCHEMA authorizer;
+

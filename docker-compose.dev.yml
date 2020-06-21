@@ -114,7 +114,7 @@ services:
       - rabbitmq
       - postgres
     env_file:
-      - ./services/user/workers/.env.dev
+      - ./.env.dev
 
   redis:
     image: redis:6

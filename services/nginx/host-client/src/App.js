@@ -17,7 +17,7 @@ class App extends React.Component {
     super(props);
     this.setService = this.setService.bind(this);
     this.setUserId = this.setUserId.bind(this);
-    this.state = { userId: Cookies.get('EBC_HOST_ID'), service: Cookies.get('EBC_HOST_SERVICE') };
+    this.state = { userId: null, service: null };
   };
 
   saveStateToLocalStorage() {
@@ -41,6 +41,11 @@ class App extends React.Component {
 
   componentDidMount() {
     this.hydrateStateWithLocalStorage();
+    let ebc_host_id = Cookies.get('EBC_HOST_ID');
+    let ebc_host_service = Cookies.get('EBC_HOST_SERVICE');
+    if (ebc_host_id && ebc_host_service) {
+      this.setState({ userId: ebc_host_id, service: ebc_host_service });
+    }
 
     // add event listener to save state to localStorage
     // when user leaves/refreshes the page

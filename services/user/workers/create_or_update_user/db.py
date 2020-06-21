@@ -14,7 +14,7 @@ Base = declarative_base()
 
 class User(Base):
     __tablename__ = "users"
-    __table_args__ = {"schema": "user"}
+    __table_args__ = {"schema": "_user"}
 
     id = Column(Integer, primary_key=True)
 
