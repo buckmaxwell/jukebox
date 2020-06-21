@@ -49,6 +49,34 @@ CORS(app)
 r = redis.Redis(host="redis", port=6379, db=0, decode_responses=True)
 
 
+def create_spotify_authorization(external_authorization_id, code):
+    async_messenger.send(
+        "authorizer.create_authorization",
+        {"code": code, "key": external_authorization_id, "service": "spotify"},
+    )
+    authorization_id = redis_wait(r, external_authorization_id)
+    if not authorization_id:
+        raise TimeoutError("0Z9MI")
+    return authorization_id
+
+
+def find_or_create_spotify_user(external_user_id, authorization_id):
+    async_messenger.send(
+        "authorizer.make_authorized_request",
+        {
+            "http_verb": "get",
+            "url": "https://api.spotify.com/v1/me",
+            "authorization_id": authorization_id,
+            "queue": "user.find_or_create_user",
+            "args": {"external_user_id": external_user_id},
+        },
+    )
+    user_id = redis_wait(r, external_user_id)
+    if not user_id:
+        raise TimeoutError("L9RBU")
+    return user_id
+
+
 def redis_wait(
     redis, key, time=15,
 ):
@@ -90,22 +118,6 @@ def login_required(f):
     return decorated_function
 
 
-@app.route("/host/", methods=["GET"])
-@login_required
-def index():
-    user_external_id = request.args.get("user")
-    service = request.args.get("service")
-    user_id = r.get(user_external_id)
-    if user_id is None:
-        room_code = "".join(
-            random.choice(string.ascii_uppercase + string.digits) for i in range(4)
-        )
-        r.set(f"{room_settings_cookie}_room_code", room_code)
-        r.set(room_code, r.get(room_settings_cookie), ex=60 * 60 * 24)
-        r.set(f"{room_code}_service", service_cookie, ex=60 * 60 * 24)
-    return render_template("index.html", room_code=room_code)
-
-
 @app.route("/host/room/<room_code>", methods=["GET"])
 def public_room(room_code):
     if r.get(room_code.upper()) and r.get(f"{room_code.upper()}_service"):
@@ -121,14 +133,8 @@ def public_room(room_code):
     return jsonify({"error": "resource not found"}), 404
 
 
-@app.route("/host/service-select")
-def select_service():
-    return '<a href="/host/spotify-login">Authenticate with SPOTIFY</a>'
-
-
 @app.route("/host/spotify-login")
 def spotify_login():
-
     state_key = str(uuid.uuid4())
     r.set(state_key, "1", ex=60 * 30)
     params = {
@@ -143,35 +149,21 @@ def spotify_login():
     return redirect(new_url, code=302)
 
 
-@app.route("/host/spotify")
+@app.route("/host/spotify/callback")
 def spotify():
     code = request.args.get("code")
     state = request.args.get("state")
     error = request.args.get("error")
     if code is not None and r.get(state):
-        room_settings_cookie = str(uuid.uuid4())
-        async_messenger.send(
-            "authorizer.create_authorization",
-            {"code": code, "key": room_settings_cookie, "service": "spotify"},
-        )
 
-        authorization_id = redis_wait(r, room_settings_cookie)
-        if not authorization_id:
-            raise TimeoutError("0Z9MI")
+        external_auth_id = str(uuid.uuid4())
+        external_user_id = str(uuid.uuid4())
+        auth_id = create_spotify_authorization(external_auth_id, code)
+        _ = find_or_create_spotify_user(external_user_id, auth_id)
 
-        async_messenger.send(
-            "authorizer.make_authorized_request",
-            {
-                "http_verb": "get",
-                "url": "https://api.spotify.com/v1/me",
-                "authorization_id": authorization_id,
-                "queue": "user.find_or_create_user",
-            },
-        )
-
-        response = make_response(redirect("/host/"))
-        response.set_cookie("ROOM_SETTINGS", room_settings_cookie)
-        response.set_cookie("SERVICE", "spotify")
+        response = make_response(redirect("/rooms/"))
+        response.set_cookie("EBC_HOST_ID", external_user_id)
+        response.set_cookie("EBC_HOST_SERVICE", "spotify")
         return response
     return jsonify({"error": f"{error}: you are not logged in"}), 400
 

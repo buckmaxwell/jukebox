@@ -5,6 +5,7 @@ import { createBrowserHistory } from 'history';
 import NavBar from "./NavBar";
 import ServiceSelect from "./ServiceSelect";
 import RoomSettings from "./RoomSettings";
+import Cookies from 'js-cookie';
 
 // TODO: is this necessary, what does it do
 export const history = createBrowserHistory({
@@ -14,11 +15,21 @@ export const history = createBrowserHistory({
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { userId: null, service: null };
+    this.setService = this.setService.bind(this);
+    this.setUserId = this.setUserId.bind(this);
+    this.state = { userId: Cookies.get('EBC_HOST_ID'), service: Cookies.get('EBC_HOST_SERVICE') };
   };
 
   saveStateToLocalStorage() {
     localStorage.setItem('__ebc_room_settings__', JSON.stringify(this.state));
+  }
+
+  setService(service) {
+    this.setState({ service });
+  }
+
+  setUserId(userId) {
+    this.setState({ userId });
   }
 
   hydrateStateWithLocalStorage() {
@@ -58,7 +69,7 @@ class App extends React.Component {
         userId={this.state.userId}
       />;
     } else {
-      body = <ServiceSelect className="ServiceSelect" />;
+      body = <ServiceSelect className="ServiceSelect" thisSetService={this.setService} setUserId={this.setUserId} />;
     }
 
     return (
