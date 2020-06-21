@@ -104,6 +104,16 @@ services:
       - rabbitmq
       - postgres
 
+  create_or_update_user:
+    build: ./services/user/workers/create_or_update_user
+    volumes:
+      - ./services/user/workers/create_or_update_user/:/usr/src/app/
+    depends_on:
+      - rabbitmq
+      - postgres
+    env_file:
+      - ./services/user/workers/.env.dev
+
   redis:
     image: redis:6
 

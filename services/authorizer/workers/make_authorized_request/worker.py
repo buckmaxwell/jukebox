@@ -48,13 +48,14 @@ def record_queue_response_helper(resp_dict, queue):
     async_messenger.send(queue, resp_dict)
 
 
-def response_to_dict(resp):
+def response_to_dict(resp, service):
     body = "" if resp.status_code == 204 else resp.json()
     return {
         "body": body,
         "status_code": resp.status_code,
         "headers": dict(resp.headers.lower_items()),
         "url": resp.url,
+        "service": service,
     }
 
 
@@ -63,6 +64,8 @@ def make_authorized_request(ch, method, properties, body):
     http_verb = request["http_verb"]
     url = request["url"]
     authorization_id = request["authorization_id"]
+    authorization = session.query(Authorization).get(authorization_id)
+    service = authorization.service
 
     queue = request.get("queue")
     key, expires_in = None, None
@@ -71,7 +74,7 @@ def make_authorized_request(ch, method, properties, body):
         expires_in = request["expires_in"]
 
     resp = make_authorized_request_helper(http_verb, url, authorization_id)
-    resp_dict = response_to_dict(resp)
+    resp_dict = response_to_dict(resp, service)
 
     record_queue_response_helper(
         resp_dict, queue
