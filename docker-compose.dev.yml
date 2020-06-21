@@ -69,12 +69,6 @@ services:
     depends_on:
       - redis
       - rabbitmq
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s
 
   create_authorization:
     build: ./services/authorizer/workers/create_authorization
@@ -86,12 +80,6 @@ services:
       - redis
       - rabbitmq
       - postgres
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s
 
   refresh_authorization:
     build: ./services/authorizer/workers/refresh_authorization
@@ -103,12 +91,6 @@ services:
       - redis
       - rabbitmq
       - postgres
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s
 
   create_or_update_user:
     build: ./services/user/workers/create_or_update_user
