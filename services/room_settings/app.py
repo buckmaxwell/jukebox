@@ -129,7 +129,7 @@ def refresh_login():
                 raise TimeoutError("L9RBU")
             return "", 204
         else:
-            return jsonify({"error": f"{e}: authorization not found"}), 404
+            return jsonify({"error": f"authorization not found"}), 404
     except (KeyError, TimeoutError) as e:
         return jsonify({"error": f"{e}: could not refresh"}), 400
 
