@@ -13,6 +13,7 @@ services:
     env_file:
       - ./.env.dev
     stdin_open: true
+
   guest_app_dev:
     build:
       context: ./services/nginx/jukebox-client
@@ -25,6 +26,7 @@ services:
     env_file:
       - ./.env.dev
     stdin_open: true
+
   nginx:
     build:
       context: ./services/nginx
