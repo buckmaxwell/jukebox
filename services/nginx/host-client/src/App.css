@@ -1,5 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Permanent+Marker&display=swap");
+
 .App {
-  text-align: center;
+  background-color: #1d1e22;
+}
+html {
+  background-color: #1d1e22;
 }
 
 .App-logo {
@@ -35,4 +40,19 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.btn,
+.btn:hover,
+.btn:visited,
+.btn:active {
+  margin-top: 20px;
+  font-family: "Luckiest Guy", cursive;
+  font-size: xx-large;
+
+  background-color: #553c7b;
+  color: #ffffff;
+  border: 0 solid;
+  border-radius: 12px;
+  box-shadow: none;
 }
