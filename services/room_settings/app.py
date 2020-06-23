@@ -79,9 +79,7 @@ def find_or_create_spotify_user(ebc_host_id, authorization_id):
     return user_id
 
 
-def redis_wait(
-    redis, key, time=15,
-):
+def redis_wait(redis, key, time=15):
     sleep_time = 0.25
     tries = int(time / sleep_time)
     result = None
@@ -91,6 +89,19 @@ def redis_wait(
             return result
         sleep(0.25)
     return result
+
+
+def random_room_code():
+    return "".join(
+        random.choice(string.ascii_uppercase + string.digits) for i in range(4)
+    )
+
+
+def add_room(ebc_host_id):
+    ebc_host_rooms = f"{ebc_host_id}_rooms"
+    room_code = random_room_code()
+    r.rpush(ebc_host_rooms, room_code)
+    return room_code
 
 
 def login_required(f):
@@ -122,10 +133,15 @@ def login_required(f):
     return decorated_function
 
 
-@app.route("/host/rooms")
+@app.route("/host/rooms", methods=["GET", "POST"])
 @login_required
 def my_rooms():
     ebc_host_id = request.cookies["EBC_HOST_ID"]
+
+    if request.method == "POST":
+        room_code = add_room(ebc_host_id)
+        return room_code, 201
+
     data = []
 
     ebc_host_rooms = f"{ebc_host_id}_rooms"
@@ -134,6 +150,7 @@ def my_rooms():
         data.append(
             {
                 "room_code": room_code,
+                "id": room_code,
                 "expires": arrow.now().shift(seconds=int(r.ttl(room_code))).humanize(),
                 "role": "owner",
             }
@@ -145,6 +162,7 @@ def my_rooms():
         data.append(
             {
                 "room_code": room_code,
+                "id": room_code,
                 "expires": arrow.now().shift(seconds=int(r.ttl(room_code))).humanize(),
                 "role": "follower",
             }
