@@ -8,6 +8,7 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 from time import sleep
 import async_messenger
+import arrow
 import os
 import random
 import redis
@@ -90,6 +91,66 @@ def redis_wait(
             return result
         sleep(0.25)
     return result
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        ebc_host_id = request.cookies.get("EBC_HOST_ID")
+        ebc_host_auth = f"{ebc_host_id}_auth"
+        service = request.cookies.get("EBC_HOST_SERVICE")
+        job_id = str(uuid.uuid4())
+
+        authorization_id = r.get(ebc_host_auth) if ebc_host_auth else None
+        if authorization_id:
+            async_messenger.send(
+                "authorizer.refresh_authorization",
+                {
+                    "authorization_id": authorization_id,
+                    "job_id": job_id,
+                    "service": service,
+                },
+            )
+            if redis_wait(r, job_id):
+                return f(*args, **kwargs)
+
+        response = make_response(redirect("/rooms"))
+        response.set_cookie("EBC_HOST_ID", "", expires=0)
+        response.set_cookie("EBC_HOST_SERVICE", "", expires=0)
+        return response
+
+    return decorated_function
+
+
+@app.route("/host/rooms")
+@login_required
+def my_rooms():
+    ebc_host_id = request.cookies["EBC_HOST_ID"]
+    data = []
+
+    ebc_host_rooms = f"{ebc_host_id}_rooms"
+    for i in range(0, r.llen(ebc_host_rooms)):
+        room_code = r.lindex(ebc_host_rooms, i)
+        data.append(
+            {
+                "room_code": room_code,
+                "expires": arrow.now().shift(seconds=int(r.ttl(room_code))).humanize(),
+                "role": "owner",
+            }
+        )
+
+    ebc_host_following = f"{ebc_host_id}_following"
+    for i in range(0, r.llen(ebc_host_following)):
+        room_code = r.lindex(ebc_host_following, i)
+        data.append(
+            {
+                "room_code": room_code,
+                "expires": arrow.now().shift(seconds=int(r.ttl(room_code))).humanize(),
+                "role": "follower",
+            }
+        )
+
+    return jsonify(data)
 
 
 @app.route("/host/room/<room_code>", methods=["GET"])

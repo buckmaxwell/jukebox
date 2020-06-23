@@ -1,41 +1,67 @@
 import React from 'react';
 import './RoomSettings.css';
 //import Table from 'react-bootstrap/Table'
-import ReactDOM from "react-dom";
-import MaterialTable from "material-table";
+//import MaterialTable from "material-table";
+import DataTable from 'react-data-table-component';
+import axios from 'axios';
+import { ThemeConsumer } from 'styled-components';
 
+const roomTableColumns = [
+  {
+    name: 'Room Code',
+    selector: 'room_code',
+    sortable: true,
+  },
+  {
+    name: 'Role',
+    selector: 'role',
+    sortable: true,
+    right: true,
+  },
+  {
+    name: 'Expires',
+    selector: 'expires',
+    sortable: true,
+    right: true,
+  },
+];
 
 class RoomSettings extends React.Component {
+  constructor(props) {
+    super(props);
+    this.getRoomTableData = this.getRoomTableData.bind(this);
+    this.state = { roomTableData: [] };
+    this.ROOMS_URL =
+      process.env.REACT_APP_API_HOST + "/host/rooms";
+  }
+
+
+  getRoomTableData() {
+    let url = this.ROOMS_URL
+    let that = this;
+    axios.get(url, { withCredentials: true })
+      .then(function (response) {
+        console.log(response);
+        that.setState({ roomTableData: response.data })
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  componentDidMount() {
+    this.getRoomTableData();
+  }
+
 
   render() {
-
     return (
       <div className="RoomSettings">
-        <h1>RoomSettings Component</h1>
         <div style={{ maxWidth: '100%' }}>
-          <MaterialTable
-            title="Your Rooms"
-            columns={[
-              { title: 'Code', field: 'name' },
-              { title: 'Role', field: 'surname' },
-              { title: 'Expiration', field: 'birthYear', type: 'numeric' },
-            ]}
-            data={[
-              { name: 'Mehmet', surname: 'Baran', birthYear: 1987, birthCity: 63 },
-              { name: 'Zerya Betül', surname: 'Baran', birthYear: 2017, birthCity: 34 },
-            ]}
-            actions={[
-              {
-                icon: 'delete',
-                tooltip: 'Delete Room',
-                onClick: (event, rowData) => confirm("You want to delete " + rowData.name)
-              },
-              {
-                icon: 'save_alt',
-                tooltip: 'Export as playlist',
-                onClick: (event, rowData) => confirm("You want to delete " + rowData.name)
-              },
-            ]}
+          <DataTable
+            title="Rooms you host or follow"
+            columns={roomTableColumns}
+            data={this.roomTableData}
           />
         </div>
       </div >
