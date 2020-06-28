@@ -1,10 +1,12 @@
 #!/usr/bin/env/python3
 
-from db import User, Session
 import json
-import pika
 import sys
+
+import pika
 import redis
+
+from db import Session, User
 
 current_module = sys.modules[__name__]
 

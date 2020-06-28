@@ -1,94 +1,45 @@
 #!/usr/bin/env/python3
 
-from flask import Flask, request, url_for, jsonify
-from flask import redirect, make_response, render_template
-from flask_cors import CORS
-from functools import wraps
-from sentry_sdk.integrations.flask import FlaskIntegration
-from sentry_sdk.integrations.redis import RedisIntegration
-from time import sleep
-import async_messenger
-import arrow
 import os
 import random
-import redis
-import sentry_sdk
 import string
 import urllib
 import uuid
+from functools import wraps
+
+import arrow
+import async_messenger
+import redis
+import sentry_sdk
+from flask import (
+    Flask,
+    jsonify,
+    make_response,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
+from flask_cors import CORS
+from sentry_sdk.integrations.flask import FlaskIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
+
+import ebc_serializer
+from db import Room, Session
+from redis_wait import redis_wait
 
 sentry_sdk.init(
     dsn="https://877d23fec9764314b6f0f15533ce1574@o398013.ingest.sentry.io/5253121",
     integrations=[FlaskIntegration(), RedisIntegration()],
 )
 
-# Constants
-
-SPOTIFY_CLIENT_ID = os.environ["SPOTIFY_CLIENT_ID"]
-SPOTIFY_CLIENT_SECRET = os.environ["SPOTIFY_CLIENT_SECRET"]
-SPOTIFY_REDIRECT_URI = os.environ["SPOTIFY_REDIRECT_URI"]
-SPOTIFY_API_SCOPES = [
-    "playlist-modify-private",
-    "user-modify-playback-state",
-    "user-read-currently-playing",
-    "user-read-playback-state",
-    "streaming",
-    "app-remote-control",
-    "playlist-modify-public",
-    "playlist-read-collaborative",
-    "playlist-read-private",
-    "user-library-modify",
-    "user-library-read",
-    "user-read-email",
-    "user-read-recently-played",
-    "user-top-read",
-]
+ROOM_LIFESPAN = 60 * 60 * 24  # one day
 
 app = Flask(__name__)
 CORS(app)
 
+session = Session()
 r = redis.Redis(host="redis", port=6379, db=0, decode_responses=True)
-
-
-def create_spotify_authorization(external_authorization_id, code):
-    async_messenger.send(
-        "authorizer.create_authorization",
-        {"code": code, "key": external_authorization_id, "service": "spotify"},
-    )
-    authorization_id = redis_wait(r, external_authorization_id)
-    if not authorization_id:
-        raise TimeoutError("0Z9MI")
-    return authorization_id
-
-
-def find_or_create_spotify_user(ebc_host_id, authorization_id):
-    ebc_host_user = f"{ebc_host_id}_user"
-    async_messenger.send(
-        "authorizer.make_authorized_request",
-        {
-            "http_verb": "get",
-            "url": "https://api.spotify.com/v1/me",
-            "authorization_id": authorization_id,
-            "queue": "user.create_or_update_user",
-            "kwargs": {"ebc_host_user": ebc_host_user},
-        },
-    )
-    user_id = redis_wait(r, ebc_host_user)
-    if not user_id:
-        raise TimeoutError("L9RBU")
-    return user_id
-
-
-def redis_wait(redis, key, time=15):
-    sleep_time = 0.25
-    tries = int(time / sleep_time)
-    result = None
-    for _ in range(tries):
-        result = redis.get(key)
-        if result:
-            return result
-        sleep(0.25)
-    return result
 
 
 def random_room_code():
@@ -97,18 +48,23 @@ def random_room_code():
     )
 
 
-def add_room(ebc_host_id):
-    ebc_host_rooms = f"{ebc_host_id}_rooms"
+def add_room(user_id):
     room_code = random_room_code()
-    r.rpush(ebc_host_rooms, room_code)
+
+    room = Room(
+        code=room_code, host=user_id, expiration=arrow.now().shift(days=1).datetime,
+    )
+    session.add(room)
+    session.commit()
+
+    r.set(room_code, room.id, ex=ROOM_LIFESPAN)
     return room_code
 
 
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        ebc_host_id = request.cookies.get("EBC_HOST_ID")
-        ebc_host_auth = f"{ebc_host_id}_auth"
+        ebc_host_auth = request.cookies.get("EBC_HOST_AUTH")
         service = request.cookies.get("EBC_HOST_SERVICE")
         job_id = str(uuid.uuid4())
 
@@ -126,7 +82,8 @@ def login_required(f):
                 return f(*args, **kwargs)
 
         response = make_response(redirect("/rooms"))
-        response.set_cookie("EBC_HOST_ID", "", expires=0)
+        response.set_cookie("EBC_HOST_AUTH", "", expires=0)
+        response.set_cookie("EBC_HOST_USER", "", expires=0)
         response.set_cookie("EBC_HOST_SERVICE", "", expires=0)
         return response
 
@@ -136,37 +93,15 @@ def login_required(f):
 @app.route("/host/rooms", methods=["GET", "POST"])
 @login_required
 def my_rooms():
-    ebc_host_id = request.cookies["EBC_HOST_ID"]
-
+    user_id = r.get(request.cookies["EBC_HOST_USER"])
     if request.method == "POST":
-        room_code = add_room(ebc_host_id)
+        room_code = add_room(user_id)
         return room_code, 201
 
+    rooms = session.query(Room).filter(Room.host == user_id).all()
     data = []
-
-    ebc_host_rooms = f"{ebc_host_id}_rooms"
-    for i in range(0, r.llen(ebc_host_rooms)):
-        room_code = r.lindex(ebc_host_rooms, i)
-        data.append(
-            {
-                "room_code": room_code,
-                "id": room_code,
-                "expires": arrow.now().shift(seconds=int(r.ttl(room_code))).humanize(),
-                "role": "owner",
-            }
-        )
-
-    ebc_host_following = f"{ebc_host_id}_following"
-    for i in range(0, r.llen(ebc_host_following)):
-        room_code = r.lindex(ebc_host_following, i)
-        data.append(
-            {
-                "room_code": room_code,
-                "id": room_code,
-                "expires": arrow.now().shift(seconds=int(r.ttl(room_code))).humanize(),
-                "role": "follower",
-            }
-        )
+    for room in rooms:
+        data.append(ebc_serializer.room(room, user_id))
 
     return jsonify(data)
 
@@ -186,69 +121,5 @@ def public_room(room_code):
     return jsonify({"error": "resource not found"}), 404
 
 
-@app.route("/host/refresh-login")
-def refresh_login():
-    try:
-        ebc_host_id = request.cookies["EBC_HOST_ID"]
-        ebc_host_auth = f"{ebc_host_id}_auth"
-        service = request.cookies["EBC_HOST_SERVICE"]
-
-        job_id = str(uuid.uuid4())
-        authorization_id = r.get(ebc_host_auth) if ebc_host_auth else None
-        if authorization_id:
-            async_messenger.send(
-                "authorizer.refresh_authorization",
-                {
-                    "authorization_id": authorization_id,
-                    "job_id": job_id,
-                    "service": service,
-                },
-            )
-            if not redis_wait(r, job_id):
-                raise TimeoutError("L9RBU")
-            return "", 204
-        else:
-            return jsonify({"error": f"authorization not found"}), 404
-    except (KeyError, TimeoutError) as e:
-        return jsonify({"error": f"{e}: could not refresh"}), 400
-
-
-@app.route("/host/spotify-login")
-def spotify_login():
-    state_key = str(uuid.uuid4())
-    r.set(state_key, "1", ex=60 * 30)
-    params = {
-        "client_id": SPOTIFY_CLIENT_ID,
-        "response_type": "code",
-        "redirect_uri": SPOTIFY_REDIRECT_URI,
-        "state": state_key,
-        "scope": " ".join(SPOTIFY_API_SCOPES),
-        "show_dialog": "false",
-    }
-    new_url = "https://accounts.spotify.com/authorize?" + urllib.parse.urlencode(params)
-    return redirect(new_url, code=302)
-
-
-@app.route("/host/spotify")
-def spotify():
-    code = request.args.get("code")
-    state = request.args.get("state")
-    error = request.args.get("error")
-    if code is not None and r.get(state):
-
-        external_auth_id = str(uuid.uuid4())
-        ebc_host_id = str(uuid.uuid4())
-        auth_id = create_spotify_authorization(external_auth_id, code)
-        _ = find_or_create_spotify_user(ebc_host_id, auth_id)
-        r.set(f"{ebc_host_id}_auth", auth_id)
-
-        response = make_response(redirect("/rooms/"))
-        response.set_cookie("EBC_HOST_ID", ebc_host_id, max_age=60 * 60 * 24 * 7)
-        response.set_cookie("EBC_HOST_SERVICE", "spotify")
-        return response
-    return jsonify({"error": f"{error}: you are not logged in"}), 400
-
-
 if __name__ == "__main__":
-
     app.run(host="0.0.0.0", port=5000, debug=True)
