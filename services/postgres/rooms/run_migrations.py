@@ -2,5 +2,4 @@
 
 from migrator import run_migrations
 
-run_migrations("authorizer")
-
+run_migrations("room")

@@ -2,4 +2,4 @@
 
 from migrator import rollback_migrations
 
-rollback_migrations("authorizer")
+rollback_migrations("shared_functions")
