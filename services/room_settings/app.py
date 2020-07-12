@@ -24,7 +24,6 @@ from flask_cors import CORS
 from sentry_sdk.integrations.flask import FlaskIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 
-import ebc_serializer
 from db import Room, Session
 from redis_wait import redis_wait
 
@@ -101,7 +100,15 @@ def my_rooms():
     rooms = session.query(Room).filter(Room.host == user_id).all()
     data = []
     for room in rooms:
-        data.append(ebc_serializer.room(room, user_id))
+        # TODO: this is not an ideal serialization strategy
+        data.append(
+            {
+                "id": room.id,
+                "code": room.code,
+                "expiration": room.expiration,
+                "role": "host" if room.host == user_id else "follower",
+            }
+        )
 
     return jsonify(data)
 
