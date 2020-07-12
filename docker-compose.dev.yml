@@ -36,9 +36,10 @@ services:
     ports:
       - 80:80
     depends_on:
-      - room_settings
-      - typeahead
       - player
+      - room_settings
+      - spotify_login_handler
+      - typeahead
 
   room_settings:
     build: ./services/room_settings
