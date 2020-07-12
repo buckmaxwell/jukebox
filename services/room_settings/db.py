@@ -1,6 +1,8 @@
 import os
+import uuid
 
 from sqlalchemy import Column, Integer, String, create_engine
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.types import JSON, DateTime
@@ -16,7 +18,13 @@ class Room(Base):
     __tablename__ = "rooms"
     __table_args__ = {"schema": "room"}
 
-    id = Column(Integer, primary_key=True)
+    id = Column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+        unique=True,
+        nullable=False,
+    )
 
     host = Column(String(250))
     code = Column(String(250))
