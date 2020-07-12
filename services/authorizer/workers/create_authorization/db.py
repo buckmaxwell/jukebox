@@ -15,6 +15,7 @@ Session = sessionmaker(bind=engine)
 Base = declarative_base()
 
 
+# TODO: this class definition is not dry
 class Authorization(Base):
     __tablename__ = "authorizations"
     __table_args__ = {"schema": "authorizer"}
