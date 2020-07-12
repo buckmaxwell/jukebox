@@ -1,5 +1,5 @@
 CREATE TABLE room.rooms (
-  id serial PRIMARY KEY,
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4 (),
   code varchar,
   host integer,
   expiration timestamp,
