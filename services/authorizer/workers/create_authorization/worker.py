@@ -11,6 +11,7 @@ import redis
 import requests
 import sentry_sdk
 import sys
+import uuid
 
 sentry_sdk.init(
     "https://877d23fec9764314b6f0f15533ce1574@o398013.ingest.sentry.io/5253121"
@@ -40,13 +41,14 @@ def spotify_request_resolver(code):
     )
 
 
-def create_authorization_helper(code, key, service):
+def create_authorization_helper(code, key, service, guid):
 
     resp = getattr(current_module, f"{service}_request_resolver")(code)
 
     resp.raise_for_status()
 
     auth = Authorization(
+        id=guid,
         access_token=resp.json()["access_token"],
         scope=resp.json()["scope"],
         access_token_expiration=arrow.now()
@@ -66,11 +68,13 @@ def create_authorization_helper(code, key, service):
 def create_authorization(ch, method, properties, body):
 
     request = json.loads(body.decode())
+
+    guid = request.get("guid", uuid.uuid4())
     code = request["code"]
     key = request["key"]
     service = request["service"]
 
-    create_authorization_helper(code, key, service)
+    create_authorization_helper(code, key, service, guid)
 
     ch.basic_ack(delivery_tag=method.delivery_tag)
 

@@ -52,6 +52,18 @@ services:
       - redis
       - rabbitmq
 
+  spotify_login_handler:
+    build: ./services/spotify_login_handler
+    volumes:
+      - ./services/spotify_login_handler/:/usr/src/app/
+    ports:
+      - 5003:5003
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - redis
+      - rabbitmq
+
   player:
     build: ./services/player
     volumes:

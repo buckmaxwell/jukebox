@@ -13,7 +13,7 @@ class ServiceSelect extends React.Component {
           <hr></hr>
           <p>
             <Button
-              href="/host/spotify-login"
+              href="/spotify/login"
               className="btn btn-primary col-sm-12">
               Spotify
             </Button>

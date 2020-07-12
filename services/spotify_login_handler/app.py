@@ -63,7 +63,7 @@ r = redis.Redis(host="redis", port=6379, db=0, decode_responses=True)
 def create_spotify_authorization(code):
     key = uuid.uuid4()
     async_messenger.send(
-        "authorizer.create_authorization",
+        lauthorizer.create_authorization",
         {"code": code, "key": key, "service": "spotify"},
     )
     authorization_id = redis_wait(r, key)
