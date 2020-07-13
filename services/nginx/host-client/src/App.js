@@ -41,9 +41,10 @@ class App extends React.Component {
 
   componentDidMount() {
     this.hydrateStateWithLocalStorage();
-    let ebc_host_id = Cookies.get('EBC_HOST_ID') || null;
+    let ebc_host_user = Cookies.get('EBC_HOST_USER') || null;
+    let ebc_host_auth = Cookies.get('EBC_HOST_AUTH') || null;
     let ebc_host_service = Cookies.get('EBC_HOST_SERVICE') || null;
-    this.setState({ userId: ebc_host_id, service: ebc_host_service });
+    this.setState({ userId: ebc_host_user, service: ebc_host_service, authId: ebc_host_auth });
 
     // add event listener to save state to localStorage
     // when user leaves/refreshes the page
@@ -70,6 +71,7 @@ class App extends React.Component {
       body = <RoomSettings className="RoomSettings"
         service={this.state.service}
         userId={this.state.userId}
+        authId={this.state.authId}
       />;
     } else {
       body = <ServiceSelect className="ServiceSelect" thisSetService={this.setService} setUserId={this.setUserId} />;

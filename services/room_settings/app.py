@@ -56,7 +56,7 @@ def add_room(user_id):
     session.add(room)
     session.commit()
 
-    r.set(room_code, room.id, ex=ROOM_LIFESPAN)
+    r.set(room_code, str(room.id), ex=ROOM_LIFESPAN)
     return room_code
 
 
@@ -93,20 +93,23 @@ def login_required(f):
 @login_required
 def my_rooms():
     user_id = r.get(request.cookies["EBC_HOST_USER"])
+
     if request.method == "POST":
         room_code = add_room(user_id)
         return room_code, 201
 
+    # TODO: add followers - join table between rooms and users
     rooms = session.query(Room).filter(Room.host == user_id).all()
     data = []
     for room in rooms:
         # TODO: this is not an ideal serialization strategy
         data.append(
             {
-                "id": room.id,
+                "id": str(room.id),
                 "code": room.code,
                 "expiration": room.expiration,
-                "role": "host" if room.host == user_id else "follower",
+                "expiration_human": arrow.get(room.expiration).humanize(),
+                "role": "host" if str(room.host) == user_id else "follower",
             }
         )
 

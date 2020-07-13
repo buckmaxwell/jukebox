@@ -9,7 +9,7 @@ import { Button } from 'react-bootstrap'
 const roomTableColumns = [
   {
     name: 'Room Code',
-    selector: 'room_code',
+    selector: 'code',
     sortable: true,
   },
   {
@@ -20,38 +20,11 @@ const roomTableColumns = [
   },
   {
     name: 'Expires',
-    selector: 'expires',
+    selector: 'expiration_human',
     sortable: true,
     right: true,
   },
 ];
-
-const data = [
-  {
-    "expires": "just now",
-    "id": "DO2W",
-    "role": "owner",
-    "room_code": "DO2W"
-  },
-  {
-    "expires": "just now",
-    "id": "YLJY",
-    "role": "owner",
-    "room_code": "YLJY"
-  },
-  {
-    "expires": "just now",
-    "id": "E919",
-    "role": "owner",
-    "room_code": "E919"
-  },
-  {
-    "expires": "just now",
-    "id": "7M7Z",
-    "role": "owner",
-    "room_code": "7M7Z"
-  }
-]
 
 class RoomSettings extends React.Component {
   constructor(props) {
@@ -109,7 +82,7 @@ class RoomSettings extends React.Component {
             className="btn btn-primary col-sm-12"
             onClick={this.addRoom}
           >
-            Add room
+            Add Room
           </Button>
 
         </div>

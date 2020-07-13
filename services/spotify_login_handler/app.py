@@ -125,7 +125,7 @@ def spotify():
         r.set(ext_user, user_id, ex=LOGIN_LENGTH)
 
         # Create response, setting cookies
-        response = make_response(redirect("/host/rooms"))
+        response = make_response(redirect("/rooms"))
         response.set_cookie("EBC_HOST_USER", ext_user, max_age=LOGIN_LENGTH)
         response.set_cookie("EBC_HOST_AUTH", ext_auth, max_age=LOGIN_LENGTH)
         response.set_cookie("EBC_HOST_SERVICE", "spotify", max_age=LOGIN_LENGTH)
