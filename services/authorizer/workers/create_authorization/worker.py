@@ -69,7 +69,7 @@ def create_authorization(ch, method, properties, body):
 
     request = json.loads(body.decode())
 
-    guid = request.get("guid", uuid.uuid4())
+    guid = request.get("guid", str(uuid.uuid4()))
     code = request["code"]
     key = request["key"]
     service = request["service"]

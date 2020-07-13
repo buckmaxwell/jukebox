@@ -61,9 +61,9 @@ r = redis.Redis(host="redis", port=6379, db=0, decode_responses=True)
 
 
 def create_spotify_authorization(code):
-    key = uuid.uuid4()
+    key = str(uuid.uuid4())
     async_messenger.send(
-        lauthorizer.create_authorization",
+        "authorizer.create_authorization",
         {"code": code, "key": key, "service": "spotify"},
     )
     authorization_id = redis_wait(r, key)
@@ -73,7 +73,7 @@ def create_spotify_authorization(code):
 
 
 def find_or_create_spotify_user(authorization_id):
-    key = uuid.uuid4()
+    key = str(uuid.uuid4())
     async_messenger.send(
         "authorizer.make_authorized_request",
         {
@@ -134,5 +134,5 @@ def spotify():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5003, debug=True)
 

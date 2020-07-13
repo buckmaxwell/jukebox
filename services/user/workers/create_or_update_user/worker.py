@@ -56,7 +56,7 @@ def create_or_update_user(ch, method, properties, body):
 
     user_id = create_or_update_user_helper(profile, service)
 
-    r.set(ebc_host_user, user_id)
+    r.set(ebc_host_user, str(user_id))
 
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
