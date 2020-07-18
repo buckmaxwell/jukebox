@@ -46,7 +46,7 @@ services:
     ports:
       - 5003:5003
     env_file:
-      - ./.env.dev
+      - ./.env.prod
     depends_on:
       - redis
       - rabbitmq
