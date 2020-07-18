@@ -119,6 +119,10 @@ def spotify():
         # Syncronously create or update a spotify authorization
         user_id = find_or_create_spotify_user(auth_id)
 
+        # User id returns current auth in redis
+        r.set(user_id, auth_id)
+        r.set(auth_id, "spotify")
+
         # Store user and auth id in redis
         ext_auth, ext_user = str(uuid.uuid4()), str(uuid.uuid4())
         r.set(ext_auth, auth_id, ex=LOGIN_LENGTH)

@@ -51,12 +51,15 @@ def add_room(user_id):
     room_code = random_room_code()
 
     room = Room(
-        code=room_code, host=user_id, expiration=arrow.now().shift(days=1).datetime,
+        code=room_code,
+        host=user_id,
+        expiration=arrow.now().shift(seconds=ROOM_LIFESPAN).datetime,
     )
     session.add(room)
     session.commit()
 
-    r.set(room_code, str(room.id), ex=ROOM_LIFESPAN)
+    r.rpush(room_code, str(user_id))
+    r.expire(room_code, ROOM_LIFESPAN)
     return room_code
 
 

@@ -1,17 +1,17 @@
 #!/usr/bin/env/python3
 
-from flask import Flask, request, jsonify
-from flask import redirect, make_response
-from flask_cors import CORS
+import logging
+import sys
+import uuid
 from functools import wraps
-from sentry_sdk.integrations.flask import FlaskIntegration
-from sentry_sdk.integrations.redis import RedisIntegration
+
 import async_messenger
 import redis
 import sentry_sdk
-import sys
-import uuid
-
+from flask import Flask, jsonify, make_response, redirect, request
+from flask_cors import CORS
+from sentry_sdk.integrations.flask import FlaskIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
 
 sentry_sdk.init(
     dsn="https://877d23fec9764314b6f0f15533ce1574@o398013.ingest.sentry.io/5253121",
@@ -59,17 +59,24 @@ def play_song():
     try:
         if not request.get_json():
             raise PlayerError("request must be json")
-        room_code = request.get_json()[
-            "room_code"
-        ].upper()  # could technically be a room settings cookie too
-        service = request.get_json()["service"]
-        authorization_id = r.get(room_code)
+        room_code = request.get_json()["room_code"].upper()
 
-        if not authorization_id:
-            return jsonify({"error": "room not found"}), 404
+        user_ids = r.get(room_code) or []  # subscribed_users
+        authorization_ids = [r.get(user_id) for user_id in user_ids if r.get(user_id)]
 
-        getattr(current_module, f"{service}_play_song")(request, authorization_id)
+        if not authorization_ids:
+            return jsonify({"error": "room not found or no room subscribers"}), 404
 
+        for authorization_id in authorization_ids:
+            service = r.get(authorization_id)
+            if service:
+                getattr(current_module, f"{service}_play_song")(
+                    request, authorization_id
+                )
+            else:
+                logging.warning(
+                    f"Service unknown for authorization id {authorization_id}"
+                )
         return "", 204
 
     except (KeyError, AttributeError, PlayerError) as e:

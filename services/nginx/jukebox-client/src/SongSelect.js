@@ -14,7 +14,7 @@ class SongSelect extends React.Component {
     this.state = { selectedSong: null, isLoading: false, songs: [] };
     //this.songInput = React.createRef();
     this.TYPEAHEAD_URL =
-      process.env.REACT_APP_API_HOST + "/tracks?service=:service&q=:q";
+      process.env.REACT_APP_API_HOST + "/tracks?q=:q";
     this.PLAYER_URL = process.env.REACT_APP_API_HOST + "/player/";
   }
 
@@ -26,7 +26,6 @@ class SongSelect extends React.Component {
     let that = this;
     return axios.post(
       that.PLAYER_URL, {
-      service: that.props.service,
       uri: that.state.selectedSong.uri,
       room_code: that.props.roomCode
     }).then(function (response) {
@@ -41,10 +40,7 @@ class SongSelect extends React.Component {
   }
 
   handleGetSongs(query) {
-    let url = this.TYPEAHEAD_URL.replace(":q", query).replace(
-      ":service",
-      this.props.service
-    );
+    let url = this.TYPEAHEAD_URL.replace(":q", query);
     let that = this;
     axios.get(url)
       .then(function (response) {
