@@ -126,16 +126,8 @@ def public_room(room_code):
     # service for the user? But probably best to just always use spotify to
     # search... and then use the isbn equivalent for tracks to convert between
     # services.
-    if r.get(room_code.upper()) and r.get(f"{room_code.upper()}_service"):
-        return (
-            jsonify(
-                {
-                    "room_code": room_code,
-                    "service": r.get(f"{room_code.upper()}_service"),
-                }
-            ),
-            200,
-        )
+    if r.get(room_code.upper()):
+        return jsonify({"room_code": room_code}), 200
     return jsonify({"error": "resource not found"}), 404
 
 
