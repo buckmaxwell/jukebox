@@ -24,7 +24,7 @@ from flask_cors import CORS
 from sentry_sdk.integrations.flask import FlaskIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 
-from db import Room, Session
+from db import Follower, Room, Session
 from redis_wait import redis_wait
 
 sentry_sdk.init(
@@ -63,6 +63,17 @@ def add_room(user_id):
     return room_code
 
 
+def add_follower(room_code, user_id):
+    room_id = session.query(Room).filter(Room.code == room_code).first().id
+    follower = Follower(room_id=str(room_id), user_id=str(user_id))
+
+    session.add(follower)
+    session.commit()
+
+    r.rpush(room_code, str(user_id))
+    return follower.id
+
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -92,6 +103,15 @@ def login_required(f):
     return decorated_function
 
 
+@app.route("/host/rooms/<room_code>/followers", methods=["POST"])
+@login_required
+def follow(room_code):
+    user_id = r.get(request.cookies["EBC_HOST_USER"])
+    if request.method == "POST":
+        follower_id = add_follower(room_code, user_id)
+        return follower_id, 201
+
+
 @app.route("/host/rooms", methods=["GET", "POST"])
 @login_required
 def my_rooms():
@@ -102,7 +122,12 @@ def my_rooms():
         return room_code, 201
 
     # TODO: add followers - join table between rooms and users
+
     rooms = session.query(Room).filter(Room.host == user_id).all()
+    for follower in session.query(Follower).filter(Follower.user_id == user_id).all():
+        rooms.append(follower.room)
+    rooms = list(set(rooms))
+
     data = []
     for room in rooms:
         # TODO: this is not an ideal serialization strategy

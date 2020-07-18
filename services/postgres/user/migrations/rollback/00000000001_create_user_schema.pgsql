@@ -1,1 +1,2 @@
-drop schema user;
+DROP SCHEMA _user;
+

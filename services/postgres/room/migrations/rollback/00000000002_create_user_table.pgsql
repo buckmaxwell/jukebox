@@ -1,1 +1,2 @@
-drop table user.users;
+DROP TABLE room.rooms;
+

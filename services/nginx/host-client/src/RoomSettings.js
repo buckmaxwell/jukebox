@@ -5,6 +5,7 @@ import './RoomSettings.css';
 import DataTable from 'react-data-table-component';
 import axios from 'axios';
 import { Button } from 'react-bootstrap'
+import FollowRoomModal from './FollowRoomModal';
 
 const roomTableColumns = [
   {
@@ -84,6 +85,7 @@ class RoomSettings extends React.Component {
           >
             Add Room
           </Button>
+          <FollowRoomModal />
 
         </div>
       </div >

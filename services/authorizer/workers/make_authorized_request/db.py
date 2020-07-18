@@ -1,3 +1,4 @@
+import datetime
 import os
 import uuid
 
@@ -32,6 +33,8 @@ class Authorization(Base):
     scope = Column(String(250))
     service = Column(String(250))
 
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
+    created_at = Column(DateTime, default=datetime.datetime.now)
+    updated_at = Column(
+        DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now
+    )
     deleted_at = Column(DateTime)

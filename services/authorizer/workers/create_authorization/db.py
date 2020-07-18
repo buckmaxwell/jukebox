@@ -1,6 +1,6 @@
+import datetime
 import os
 import uuid
-from time import sleep
 
 from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.dialects.postgresql import UUID
@@ -13,7 +13,6 @@ PG_PASS = os.environ["PG_PASS"]
 engine = create_engine(f"postgresql://{PG_USER}:{PG_PASS}@postgres:5432/jukebox")
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
-
 
 # TODO: this class definition is not dry
 class Authorization(Base):
@@ -34,6 +33,8 @@ class Authorization(Base):
     scope = Column(String(250))
     service = Column(String(250))
 
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
+    created_at = Column(DateTime, default=datetime.datetime.now)
+    updated_at = Column(
+        DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now
+    )
     deleted_at = Column(DateTime)

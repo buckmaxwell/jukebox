@@ -1,1 +1,2 @@
-DROP FUNCTION trigger_set_updated_at;
+DROP TRIGGER set_rooms_updated_at ON room.rooms;
+

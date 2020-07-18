@@ -66,6 +66,7 @@ def create_spotify_authorization(code):
         "authorizer.create_authorization",
         {"code": code, "key": key, "service": "spotify"},
     )
+
     authorization_id = redis_wait(r, key)
     if not authorization_id:
         raise TimeoutError("0Z9MI")
