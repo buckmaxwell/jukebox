@@ -61,7 +61,11 @@ def play_song():
             raise PlayerError("request must be json")
         room_code = request.get_json()["room_code"].upper()
 
-        user_ids = r.get(room_code) or []  # subscribed_users
+        user_ids = []  # owner and follower users
+        for i in range(r.llen(room_code)):
+            user_id = r.lindex(room_code, i)
+            user_ids.append(user_id)
+
         authorization_ids = [r.get(user_id) for user_id in user_ids if r.get(user_id)]
 
         if not authorization_ids:

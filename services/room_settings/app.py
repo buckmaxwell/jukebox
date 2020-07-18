@@ -121,12 +121,7 @@ def my_rooms():
 
 @app.route("/host/room/<room_code>", methods=["GET"])
 def public_room(room_code):
-    # TODO: should rooms REALLY be associated with a service. No of course not?
-    # Or maybe they should because the search service used should be the search
-    # service for the user? But probably best to just always use spotify to
-    # search... and then use the isbn equivalent for tracks to convert between
-    # services.
-    if r.get(room_code.upper()):
+    if r.exists(room_code.upper()):
         return jsonify({"room_code": room_code}), 200
     return jsonify({"error": "resource not found"}), 404
 
