@@ -8,6 +8,7 @@ astroid==2.4.1
 attrs==19.3.0
 black==19.10b0
 click==7.1.2
+git+https://github.com/buckmaxwell/jukebox.git@host-client#egg=redis_wait&subdirectory=lib/redis_wait
 git+https://github.com/buckmaxwell/jukebox.git@master#egg=async_messenger&subdirectory=lib/async_messenger
 gunicorn==20.0.4
 isort==4.3.21
