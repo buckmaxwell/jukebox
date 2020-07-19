@@ -12,6 +12,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+      SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+      SPOTIFY_EMAIL: ${{ secrets.SPOTIFY_EMAIL }}
+      SPOTIFY_PASSW: ${{ secrets.SPOTIFY_PASSW }}
 
     steps:
       - uses: actions/checkout@v2
@@ -30,3 +35,18 @@ jobs:
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: Build the docker-compose stack
+        run: |
+          docker-compose \
+           -e SPOTIFY_EMAIL=${{secrets.SPOTIFY_EMAIL }} \
+           -e SPOTIFY_PASSW=${{secrets.SPOTIFY_PASSW }} \
+           -e SPOTIFY_CLIENT_ID=${{secrets.SPOTIFY_CLIENT_ID }} \
+           -e SPOTIFY_CLIENT_SECRET=${{secrets.SPOTIFY_CLIENT_SECRET }} \
+           -f docker-compose.ci.yml up -d
+
+      - name: Check running containers
+        run: docker ps -a
+
+      - name: Run test suite
+        run: python e2e/test.py
