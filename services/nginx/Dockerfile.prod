@@ -22,6 +22,8 @@ RUN npm run build
 
 FROM nginx as production-stage
 RUN mkdir /app /app/jukebox /app/host
+# RUN chmod 755 /app/jukebox
+# RUN chmod 755 /app/host
 COPY --from=build-jukebox-app /usr/src/app/build /app/jukebox
 COPY --from=build-host-app /usr/src/app/build /app/host
 COPY nginx.prod.conf /etc/nginx/nginx.conf
