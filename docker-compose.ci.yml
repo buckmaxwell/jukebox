@@ -1,0 +1,158 @@
+version: "3.7"
+
+services:
+  selenium-hub:
+    image: selenium/hub:3.141.59-20200525
+    container_name: selenium-hub
+    ports:
+      - "4444:4444"
+
+  chrome:
+    image: selenium/node-chrome:3.141.59-20200525
+    volumes:
+      - /dev/shm:/dev/shm
+    depends_on:
+      - selenium-hub
+    environment:
+      - HUB_HOST=selenium-hub
+      - HUB_PORT=4444
+
+  # firefox:
+  #   image: selenium/node-firefox:3.141.59-20200525
+  #   volumes:
+  #     - /dev/shm:/dev/shm
+  #   depends_on:
+  #     - selenium-hub
+  #   environment:
+  #     - HUB_HOST=selenium-hub
+  #     - HUB_PORT=4444
+
+  # opera:
+  #   image: selenium/node-opera:3.141.59-20200525
+  #   volumes:
+  #     - /dev/shm:/dev/shm
+  #   depends_on:
+  #     - selenium-hub
+  #   environment:
+  #     - HUB_HOST=selenium-hub
+  #     - HUB_PORT=4444
+
+  nginx:
+    build:
+      context: ./services/nginx
+      dockerfile: Dockerfile.staging
+    ports:
+      - 80:80
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - player
+      - room_settings
+      - spotify_login_handler
+      - typeahead
+    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+
+  room_settings:
+    build: ./services/room_settings
+    command: gunicorn --bind 0.0.0.0:5000 app:app
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - redis
+      - rabbitmq
+
+  spotify_login_handler:
+    build: ./services/spotify_login_handler
+    volumes:
+      - ./services/spotify_login_handler/:/usr/src/app/
+    ports:
+      - 5003:5003
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - redis
+      - rabbitmq
+
+  create_or_update_user:
+    build: ./services/user/workers/create_or_update_user
+    volumes:
+      - ./services/user/workers/create_or_update_user/:/usr/src/app/
+    depends_on:
+      - rabbitmq
+      - postgres
+    env_file:
+      - ./.env.prod
+
+  player:
+    build: ./services/player
+    command: gunicorn --bind 0.0.0.0:5002 app:app
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - redis
+
+  typeahead:
+    build: ./services/typeahead
+    command: gunicorn --bind 0.0.0.0:5001 app:app
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - redis
+
+  make_authorized_request:
+    build: ./services/authorizer/workers/make_authorized_request
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - redis
+      - rabbitmq
+
+  create_authorization:
+    build: ./services/authorizer/workers/create_authorization
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - redis
+      - rabbitmq
+      - postgres
+
+  refresh_authorization:
+    build: ./services/authorizer/workers/refresh_authorization
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - redis
+      - rabbitmq
+      - postgres
+
+  redis:
+    image: redis:6
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+
+  rabbitmq:
+    hostname: rabbitmq
+    image: rabbitmq:3-management
+    env_file:
+      - ./.env.prod
+    ports:
+      - 15672:15672
+
+  postgres:
+    image: postgres:12
+    env_file:
+      - ./.env.prod
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/
+
+  pgmanager:
+    build: ./services/postgres
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - postgres
+
+volumes:
+  postgres-data:
+  redis-data:

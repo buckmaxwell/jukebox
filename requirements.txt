@@ -36,6 +36,7 @@ redis-wait @ git+https://github.com/buckmaxwell/jukebox.git@host-client#egg=redi
 redis==3.5.0
 regex==2020.4.4
 requests==2.23.0
+selenium==3.141.0
 sentry-sdk==0.14.4
 six==1.14.0
 spotify-request @ git+https://github.com/buckmaxwell/jukebox.git@300eb9b39f17d8f7fc583b51ce59ec1e5288e12a#subdirectory=lib/spotify_request
