@@ -51,6 +51,16 @@ services:
       - redis
       - rabbitmq
 
+  create_or_update_user:
+    build: ./services/user/workers/create_or_update_user
+    volumes:
+      - ./services/user/workers/create_or_update_user/:/usr/src/app/
+    depends_on:
+      - rabbitmq
+      - postgres
+    env_file:
+      - ./.env.prod
+
   player:
     build: ./services/player
     command: gunicorn --bind 0.0.0.0:5002 app:app
