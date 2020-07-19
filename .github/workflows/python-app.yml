@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python 3.7.4
+      - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
@@ -46,6 +46,7 @@ jobs:
           POSTGRES_DB: jukebox
           POSTGRES_PASSWORD: jukebox
           POSTGRES_USER: jukebox
+          REACT_APP_API_HOST: http://localhost
           SPOTIFY_CLIENT_ID: fakefakefake
           SPOTIFY_CLIENT_SECRET: fakefakefake
-          SPOTIFY_REDIRECT_URI: http://localhost/host/spotify
+          SPOTIFY_REDIRECT_URI: http://localhost/spotify/callback

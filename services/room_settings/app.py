@@ -24,7 +24,7 @@ from flask_cors import CORS
 from sentry_sdk.integrations.flask import FlaskIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 
-from db import Follower, Room, Session
+from .db import Follower, Room, Session
 from redis_wait import redis_wait
 
 sentry_sdk.init(
