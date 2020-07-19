@@ -37,8 +37,7 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
       - name: Build the docker-compose stack
-        run: |
-          docker-compose -e SPOTIFY_EMAIL=${{secrets.SPOTIFY_EMAIL }} -e SPOTIFY_PASSW=${{secrets.SPOTIFY_PASSW }} -e SPOTIFY_CLIENT_ID=${{secrets.SPOTIFY_CLIENT_ID }} -e SPOTIFY_CLIENT_SECRET=${{secrets.SPOTIFY_CLIENT_SECRET }} -f docker-compose.ci.yml up -d
+        run: docker-compose -f docker-compose.ci.yml up -d
 
       - name: Check running containers
         run: docker ps -a
