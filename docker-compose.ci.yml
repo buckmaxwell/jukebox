@@ -57,6 +57,9 @@ services:
     command: gunicorn --bind 0.0.0.0:5000 app:app
     env_file:
       - ./.env.ci
+    environment:
+      - SPOTIFY_CLIENT_ID=$SPOTIFY_CLIENT_ID
+      - SPOTIFY_CLIENT_SECRET=$SPOTIFY_CLIENT_SECRET
     depends_on:
       - redis
       - rabbitmq
@@ -69,6 +72,9 @@ services:
       - 5003:5003
     env_file:
       - ./.env.ci
+    environment:
+      - SPOTIFY_CLIENT_ID=$SPOTIFY_CLIENT_ID
+      - SPOTIFY_CLIENT_SECRET=$SPOTIFY_CLIENT_SECRET
     depends_on:
       - redis
       - rabbitmq
@@ -82,12 +88,18 @@ services:
       - postgres
     env_file:
       - ./.env.ci
+    environment:
+      - SPOTIFY_CLIENT_ID=$SPOTIFY_CLIENT_ID
+      - SPOTIFY_CLIENT_SECRET=$SPOTIFY_CLIENT_SECRET
 
   player:
     build: ./services/player
     command: gunicorn --bind 0.0.0.0:5002 app:app
     env_file:
       - ./.env.ci
+    environment:
+      - SPOTIFY_CLIENT_ID=$SPOTIFY_CLIENT_ID
+      - SPOTIFY_CLIENT_SECRET=$SPOTIFY_CLIENT_SECRET
     depends_on:
       - redis
 
@@ -96,6 +108,9 @@ services:
     command: gunicorn --bind 0.0.0.0:5001 app:app
     env_file:
       - ./.env.ci
+    environment:
+      - SPOTIFY_CLIENT_ID=$SPOTIFY_CLIENT_ID
+      - SPOTIFY_CLIENT_SECRET=$SPOTIFY_CLIENT_SECRET
     depends_on:
       - redis
 
@@ -103,6 +118,9 @@ services:
     build: ./services/authorizer/workers/make_authorized_request
     env_file:
       - ./.env.ci
+    environment:
+      - SPOTIFY_CLIENT_ID=$SPOTIFY_CLIENT_ID
+      - SPOTIFY_CLIENT_SECRET=$SPOTIFY_CLIENT_SECRET
     depends_on:
       - redis
       - rabbitmq
@@ -111,6 +129,9 @@ services:
     build: ./services/authorizer/workers/create_authorization
     env_file:
       - ./.env.ci
+    environment:
+      - SPOTIFY_CLIENT_ID=$SPOTIFY_CLIENT_ID
+      - SPOTIFY_CLIENT_SECRET=$SPOTIFY_CLIENT_SECRET
     depends_on:
       - redis
       - rabbitmq
@@ -120,6 +141,9 @@ services:
     build: ./services/authorizer/workers/refresh_authorization
     env_file:
       - ./.env.ci
+    environment:
+      - SPOTIFY_CLIENT_ID=$SPOTIFY_CLIENT_ID
+      - SPOTIFY_CLIENT_SECRET=$SPOTIFY_CLIENT_SECRET
     depends_on:
       - redis
       - rabbitmq
