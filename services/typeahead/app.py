@@ -67,7 +67,11 @@ def spotify_search(request):
 @app.route("/tracks/", methods=["GET"])
 def search():
     try:
-        return getattr(current_module, f"{request.args['service']}_search")(request)
+        # NOTE: no real reason not to always use the same search API. This
+        # eliminates the requirement to implement separate search behaviour for
+        # different services.
+
+        return spotify_search(request)
     except (KeyError, AttributeError, HTTPError) as e:
         return jsonify({"error": str(e)}), 400
 

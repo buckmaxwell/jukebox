@@ -19,7 +19,7 @@ class RoomCodeForm extends React.Component {
     let that = this;
     axios.get(process.env.REACT_APP_API_HOST + "/host/room/" + this.state.value)
       .then(function (response) {
-        that.props.onRoomJoined(response.data.room_code, response.data.service);
+        that.props.onRoomJoined(response.data.room_code);
       })
       .catch(function (error) {
         console.log(error);

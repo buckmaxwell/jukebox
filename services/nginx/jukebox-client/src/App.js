@@ -13,15 +13,15 @@ class App extends React.Component {
     this.handleRoomJoined = this.handleRoomJoined.bind(this);
     this.handleLeaveRoom = this.handleLeaveRoom.bind(this);
     this.setFlashMessage = this.setFlashMessage.bind(this);
-    this.state = { roomCode: null, service: null, flashMessage: null, flashAlbumArt: null };
+    this.state = { roomCode: null, flashMessage: null, flashAlbumArt: null };
   };
 
-  handleRoomJoined(roomCode, service) {
-    this.setState({ roomCode, service });
+  handleRoomJoined(roomCode) {
+    this.setState({ roomCode });
   }
 
   handleLeaveRoom() {
-    this.setState({ roomCode: null, service: null });
+    this.setState({ roomCode: null });
   }
 
   saveStateToLocalStorage() {
@@ -61,12 +61,11 @@ class App extends React.Component {
   }
 
   render() {
-    const isLoggedIn = this.state.roomCode && this.state.service;
+    const isLoggedIn = this.state.roomCode;
     let body;
     if (isLoggedIn) {
       body = <SongSelect className="SongSelect"
         onLeaveRoom={this.handleLeaveRoom}
-        service={this.state.service}
         roomCode={this.state.roomCode}
         setFlashMessage={this.setFlashMessage}
       />;

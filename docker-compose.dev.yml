@@ -1,6 +1,19 @@
 version: "3.7"
 
 services:
+  host_app_dev:
+    build:
+      context: ./services/nginx/host-client
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./services/nginx/host-client/:/usr/src/app/
+      - ./services/nginx/host-client/node_modules/:/usr/src/app/node_modules
+    ports:
+      - 3001:3001
+    env_file:
+      - ./.env.dev
+    stdin_open: true
+
   guest_app_dev:
     build:
       context: ./services/nginx/jukebox-client
@@ -13,6 +26,7 @@ services:
     env_file:
       - ./.env.dev
     stdin_open: true
+
   nginx:
     build:
       context: ./services/nginx
@@ -22,9 +36,10 @@ services:
     ports:
       - 80:80
     depends_on:
-      - room_settings
-      - typeahead
       - player
+      - room_settings
+      - spotify_login_handler
+      - typeahead
 
   room_settings:
     build: ./services/room_settings
@@ -32,6 +47,18 @@ services:
       - ./services/room_settings/:/usr/src/app/
     ports:
       - 5000:5000
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - redis
+      - rabbitmq
+
+  spotify_login_handler:
+    build: ./services/spotify_login_handler
+    volumes:
+      - ./services/spotify_login_handler/:/usr/src/app/
+    ports:
+      - 5003:5003
     env_file:
       - ./.env.dev
     depends_on:
@@ -92,8 +119,20 @@ services:
       - rabbitmq
       - postgres
 
+  create_or_update_user:
+    build: ./services/user/workers/create_or_update_user
+    volumes:
+      - ./services/user/workers/create_or_update_user/:/usr/src/app/
+    depends_on:
+      - rabbitmq
+      - postgres
+    env_file:
+      - ./.env.dev
+
   redis:
     image: redis:6
+    ports:
+      - 6379:6379
 
   rabbitmq:
     hostname: rabbitmq

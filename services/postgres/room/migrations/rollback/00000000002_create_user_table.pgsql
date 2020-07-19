@@ -1,0 +1,2 @@
+DROP TABLE room.rooms;
+

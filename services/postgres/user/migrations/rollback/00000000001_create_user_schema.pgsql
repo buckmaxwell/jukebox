@@ -1,0 +1,2 @@
+DROP SCHEMA _user;
+

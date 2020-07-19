@@ -1,4 +1,4 @@
-FROM node:latest as build-stage
+FROM node:latest as build-jukebox-app
 WORKDIR /usr/src/app
 COPY ./jukebox-client/package*.json ./
 
@@ -9,7 +9,21 @@ RUN npm install
 COPY ./jukebox-client .
 RUN npm run build
 
+FROM node:latest as build-host-app
+WORKDIR /usr/src/app
+COPY ./host-client/package*.json ./
+
+ARG REACT_APP_API_HOST
+ENV REACT_APP_API_HOST=$REACT_APP_API_HOST
+
+RUN npm install
+COPY ./host-client .
+RUN npm run build
+
 FROM nginx as production-stage
-RUN mkdir /app
-COPY --from=build-stage /usr/src/app/build /app
+RUN mkdir /app /app/jukebox /app/host
+# RUN chmod 755 /app/jukebox
+# RUN chmod 755 /app/host
+COPY --from=build-jukebox-app /usr/src/app/build /app/jukebox
+COPY --from=build-host-app /usr/src/app/build /app/host
 COPY nginx.prod.conf /etc/nginx/nginx.conf
