@@ -1,3 +1,4 @@
 FROM nginx as development-stage
 RUN mkdir /app
 COPY nginx.dev.conf /etc/nginx/nginx.conf
+COPY ./about /app/about

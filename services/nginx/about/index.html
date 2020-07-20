@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>earbud.club</title>
+  <meta name="description" content="Music with friends" />
+
+  <!-- Twitter data -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Earbud.club" />
+  <meta name="twitter:description" content="Music with friends." />
+  <meta name="twitter:creator" content="@max_buck" />
+  <meta name="twitter:image" content="http://earbud.club/about/img/logo2.png" />
+
+  <!-- Open Graph data -->
+  <meta property="og:title" content="Earbud.club" />
+  <meta property="og:url" content="https://earbud.club" />
+  <meta property="og:image" content="http://earbud.club/about/img/logo2.png" />
+  <meta property="og:description" content="Music with friends." />
+  <meta property="og:site_name" content="Earbud.club" />
+
+  <!-- Favicon/theme -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" href="/about/img/favicon-32x32.png" sizes="32x32" />
+  <link rel="icon" type="image/png" href="/about/img/favicon-16x16.png" sizes="16x16" />
+  <link rel="manifest" href="/about/img/manifest.json" />
+  <link rel="mask-icon" href="/about/img/safari-pinned-tab.svg" color="#24d05a" />
+  <link rel="shortcut icon" href="/about/img/favicon.png" />
+  <meta name="msapplication-config" content="/about/img/browserconfig.xml" />
+  <meta name="theme-color" content="#ffffff" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+  <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+  <div class="container">
+    <div class="header-section">
+      <div class="header-frame">
+        <h2>Music with friends.</h2>
+      </div>
+      <div class="img-frame">
+        <img id="propic" src="img/logo2.png" alt="" />
+      </div>
+    </div>
+    <div class="links">
+      <a href="https://earbud.club">HOME</a>
+      <a href="https://github.com/buckmaxwell/jukebox">github</a>
+      <a href="mailto:maxwellhigginsbuck@gmail.com">email</a>
+    </div>
+    <div class="bio-switcher">
+      <div class="toggler">
+        <button id="about" class="show">About</button>
+        <button id="troubleshooting">Troubleshoot</button>
+        <button id="faq">FAQ</button>
+      </div>
+      <div class="sexn about show">
+        <p>When I started developing earbud.club, I intended it to be a way of sharing my Spotify acccount with
+          my own friends, without the commotion that went along with passing my phone around at a party.</p>
+
+        <p>Passing a phone means lockouts, friends asking for your password, and the chance that your *very* lovely
+          friend,
+          who happens to have an affinity for Christian Chill Wave Remixes of Soul Classics, babysits the music all
+          night. Not to mention that lingering fear that your personal trove of embarrasing nude selfies will be found
+          at any moment.</p>
+
+        <p>And earbud.club is all that. But then Covid-19 happened, and I needed a way to make my music parties remote.
+          So now, you can share music with friends while you're together, and while you're keeping your distance. I
+          hope
+          you have fun.
+        </p>
+
+      </div>
+      <div class="sexn troubleshooting">
+        <p>Sorry to hear things aren't going as expected. Here are some things that might be going wrong. If you keep
+          having issues please send me an <a href="mailto:maxwellhigginsbuck@gmail.com">email</a> or leave me an issue
+          on github.</p>
+
+        <h2>Songs aren't playing</h2>
+
+        <p>If songs aren't playing, it's probably because you don't have any active devices on Spotify. Start the party
+          by playing a song on your Spotify account.</p>
+
+        <h2>Adding rooms</h2>
+
+        To add a room, you'll need a Spotify premium account. Click on 'Host Or Cohost' in the navbar, authenticate with
+        Spotify, then click 'Add a Room'. You should see your room get added to the table.
+
+        <p> <strong>If your friends are in the same physical room as you</strong>, share the code with them and have
+          them enter
+          it on the main page of the site. To add songs to your own room you can do the same - click on 'Queue Songs' to
+          get back to the main page.</p>
+
+        <h2>Sharing your room, or following someone else's</h2>
+
+        <p> <strong>If your friends are in a different physical space</strong>, share the code with them and have them
+          'Follow'
+          your room. They'll have to click on 'Host or Cohost', authenticate with their premium account, and then click
+          the 'Follow Room' button to connect their account. Once their account is connected, have them go back to the
+          main site by clicking 'Queue Songs' and enter the same 4 character code. When they queue a song, it will queue
+          on both of your devices.</p>
+        <p>*Make sure your friend knows that they should start playing a song on Spotify first*, or else earbud.club
+          won't know
+          which device to play on... and it won't play at all :( </p>
+      </div>
+      <div class="sexn faq">
+        <h3>Is it free?</h3>
+        Yes, but if you want to host or co-host you need a Spotify premium subscription.
+        <h3>Doesn't Spotify already have this functionality?</h3>
+        No, Spotify does have a beta version of a tool for sharing your queue in a group, but it requires everyone to
+        have Spotify. Spotify has no way of sharing a queue accross multiple devices at the same time.
+        <h3>How do most people use earbud.club?</h3>
+        <p>Creating a democratic jukebox at parties, sharing the car stereo, and enjoying music with people who are far
+          away are all uses we love. If you want to tell me the story of how you are using earbud.club, please send me
+          an email! </p>
+        <h3>Is it open source?</h3>
+        Yes. The project lives on <a href="https://github.com/buckmaxwell/jukebox">github</a>. Feel free to give it a
+        look and if you feel like submitting a PR to improve it, please do.
+      </div>
+    </div>
+    <div class="dark-mode-toggler">
+      <input type="checkbox" id="toggler" />
+      <label for="toggler" aria-label="Toggler for Dark Mode"></label>
+    </div>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+
+</html>
