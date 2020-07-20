@@ -19,6 +19,9 @@ try:
     chrome.get("https://www.google.com")
     assert chrome.title == "Google"
 
+    print("Visit the main page")
+    chrome.get("http://nginx")
+
     print("Check that troubleshooting in client app works")
     troubleshooting_link = '//*[@id="responsive-navbar-nav"]/div/a[3]'
     chrome.find_element_by_xpath(troubleshooting_link).click()
@@ -26,7 +29,6 @@ try:
     chrome.find_element_by_xpath(link_back_home).click()
 
     print("Submit a bad room code")
-    chrome.get("http://nginx")
     label_for_form_room_code_input = '//*[@id="root"]/div/div[2]/form/div/label'
     room_code_input = '//*[@id="root"]/div/div[2]/form/div/input[1]'
     room_code_submit = '//*[@id="root"]/div/div[2]/form/div/input[2]'
