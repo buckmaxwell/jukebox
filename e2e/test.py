@@ -19,6 +19,12 @@ try:
     chrome.get("https://www.google.com")
     assert chrome.title == "Google"
 
+    print("Check that troubleshooting link works")
+    troubleshooting_link = '//*[@id="responsive-navbar-nav"]/div/a[3]'
+    chrome.find_element_by_xpath(troubleshooting_link).click()
+    link_back_home = "/html/body/div/div[2]/a[1]"
+    chrome.find_element_by_xpath(link_back_home).click()
+
     print("Submit a bad room code")
     chrome.get("http://nginx")
     label_for_form_room_code_input = '//*[@id="root"]/div/div[2]/form/div/label'
