@@ -18,7 +18,7 @@ class NavBar extends React.Component {
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="mr-auto" activeKey="/">
               <Nav.Link href="/">Queue Songs</Nav.Link>
-              <Nav.Link href="#troubleShooting">Trouble Shooting</Nav.Link>
+              <Nav.Link href="/about/">Guide / Trouble Shooting</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Navbar>

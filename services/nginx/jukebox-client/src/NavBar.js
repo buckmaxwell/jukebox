@@ -22,7 +22,7 @@ class NavBar extends React.Component {
                 eventKey="leaveRoom"
                 onSelect={this.props.onLeaveRoom}
               >Leave Room</Nav.Link>
-              <Nav.Link href="#troubleShooting">Trouble Shooting</Nav.Link>
+              <Nav.Link href="/about/">Guide / Trouble Shooting</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Navbar>
