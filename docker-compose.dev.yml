@@ -76,6 +76,16 @@ services:
     depends_on:
       - redis
 
+  create_play:
+    build: ./services/player/workers/create_play
+    volumes:
+      - ./services/player/workers/create_play/:/usr/src/app/
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - redis
+      - rabbitmq
+
   typeahead:
     build: ./services/typeahead
     volumes:

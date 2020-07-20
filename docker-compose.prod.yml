@@ -69,6 +69,16 @@ services:
     depends_on:
       - redis
 
+  create_play:
+    build: ./services/player/workers/create_play
+    volumes:
+      - ./services/player/workers/create_play/:/usr/src/app/
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - redis
+      - rabbitmq
+
   typeahead:
     build: ./services/typeahead
     command: gunicorn --bind 0.0.0.0:5001 app:app

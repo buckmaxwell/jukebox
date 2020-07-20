@@ -29,16 +29,44 @@ class PlayerError(Exception):
     pass
 
 
+def spotify_create_play(guid, request):
+    # Universal ids, these are nullable
+    isrc = request.get_json()["isrc"]
+    upc = request.get_json()["upc"]
+    ean = request.get_json()["ean"]
+
+    spotify_id = request.get_json()["spotify_id"]
+
+    room_code = request.get_json()["room_code"]
+
+    _record_play_job = str(uuid.uuid4())
+    async_messenger.send(
+        "player.create_play",
+        {
+            "guid": guid,
+            "isrc": isrc,
+            "upc": upc,
+            "ean": ean,
+            "spotify_id": spotify_id,
+            "room_code": room_code,
+            "key": _record_play_job,
+            "expires_in": 60 * 60,
+        },
+    )
+
+
 def spotify_play_song(request, authorization_id):
-    uri = request.get_json()["uri"]
-    job_id1, job_id2 = str(uuid.uuid4()), str(uuid.uuid4())
+    uri = request.get_json()[
+        "spotify_id"
+    ]  # Spotify handles search so we get a spotify id for free. Other music services will have to use the isrc, ean, or upc to find and play the song
+    _queue_song_job, _unpause_if_paused_job = str(uuid.uuid4()), str(uuid.uuid4())
     async_messenger.send(
         "authorizer.make_authorized_request",
         {
             "http_verb": "post",
             "url": f"https://api.spotify.com/v1/me/player/queue?uri={uri}",
             "authorization_id": authorization_id,
-            "key": job_id1,
+            "key": _queue_song_job,
             "expires_in": 60 * 60,
         },
     )
@@ -48,7 +76,7 @@ def spotify_play_song(request, authorization_id):
             "http_verb": "put",
             "url": "https://api.spotify.com/v1/me/player/play",
             "authorization_id": authorization_id,
-            "key": job_id2,
+            "key": _unpause_if_paused_job,
             "expires_in": 60 * 60,
         },
     )
@@ -71,6 +99,11 @@ def play_song():
         if not authorization_ids:
             return jsonify({"error": "room not found or no room subscribers"}), 404
 
+        # Log the play in the database
+        play_id = str(uuid.uuid4())
+        spotify_create_play(play_id, request)
+
+        # Send out play requests (actually play the songs)
         for authorization_id in authorization_ids:
             service = r.get(authorization_id)
             if service:

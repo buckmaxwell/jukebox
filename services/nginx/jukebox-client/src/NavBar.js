@@ -12,7 +12,7 @@ class NavBar extends React.Component {
       <div className="NavBar">
         <Navbar collapseOnSelect expand="lg" variant="dark" sticky="top">
           <Navbar.Brand href="/">
-            <img src={logo} height="80px;" alt="Logo" />
+            <img src={logo} width="200px;" alt="Logo" />
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">

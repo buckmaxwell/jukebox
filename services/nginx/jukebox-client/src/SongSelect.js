@@ -26,7 +26,10 @@ class SongSelect extends React.Component {
     let that = this;
     return axios.post(
       that.PLAYER_URL, {
-      uri: that.state.selectedSong.uri,
+      spotify_id: that.state.selectedSong.spotify_id,
+      isrc: that.state.selectedSong.isrc,
+      upc: that.state.selectedSong.upc,
+      ean: that.state.selectedSong.ean,
       room_code: that.props.roomCode
     }).then(function (response) {
       console.log(response);
