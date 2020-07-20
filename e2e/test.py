@@ -19,8 +19,16 @@ try:
     chrome.get("https://www.google.com")
     assert chrome.title == "Google"
 
-    print("Submit a bad room code")
+    print("Visit the main page")
     chrome.get("http://nginx")
+
+    print("Check that troubleshooting in client app works")
+    troubleshooting_link = '//*[@id="responsive-navbar-nav"]/div/a[3]'
+    chrome.find_element_by_xpath(troubleshooting_link).click()
+    link_back_home = "/html/body/div/div[2]/a[1]"
+    chrome.find_element_by_xpath(link_back_home).click()
+
+    print("Submit a bad room code")
     label_for_form_room_code_input = '//*[@id="root"]/div/div[2]/form/div/label'
     room_code_input = '//*[@id="root"]/div/div[2]/form/div/input[1]'
     room_code_submit = '//*[@id="root"]/div/div[2]/form/div/input[2]'
@@ -64,9 +72,14 @@ try:
     room_code_modal_submit_button = "/html/body/div[3]/div/div/div[2]/form/button"
     chrome.find_element_by_xpath(room_code_modal_submit_button).click()
 
-    print("Follow Queue Songs Link")
+    print("Check for Queue Songs Link")
     queue_songs_link = '//*[@id="responsive-navbar-nav"]/div/a[1]'
-    chrome.find_element_by_xpath(queue_songs_link).click()
+
+    print("Check that troubleshooting in host app works")
+    troubleshooting_link2 = '//*[@id="responsive-navbar-nav"]/div/a[2]'
+    chrome.find_element_by_xpath(troubleshooting_link2).click()
+    link_back_home = "/html/body/div/div[2]/a[1]"
+    chrome.find_element_by_xpath(link_back_home).click()
 
     print("Enter the room")
     room_code_input = '//*[@id="root"]/div/div[2]/form/div/input[1]'
