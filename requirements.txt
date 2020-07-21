@@ -8,6 +8,8 @@ appdirs==1.4.3
 arrow==0.15.6
 astroid==2.4.0
 async-messenger @ git+https://github.com/buckmaxwell/jukebox.git@300eb9b39f17d8f7fc583b51ce59ec1e5288e12a#subdirectory=lib/async_messenger
+async-messenger @ git+https://github.com/buckmaxwell/jukebox.git@300eb9b39f17d8f7fc583b51ce59ec1e5288e12a#subdirectory=lib/async_messenger
+jukebox-db @ git+https://github.com/buckmaxwell/jukebox.git@record-plays#egg=jukebox_db&subdirectory=lib/jukebox_db
 attrs==19.3.0
 black==19.10b0
 blinker==1.4

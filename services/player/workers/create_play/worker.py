@@ -1,6 +1,6 @@
 #!/usr/bin/env/python3
 
-from db import Play, Session
+from jukebox_db import Play, Session
 from time import sleep
 import arrow
 import json

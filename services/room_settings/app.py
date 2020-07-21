@@ -26,7 +26,7 @@ from redis_wait import redis_wait
 from sentry_sdk.integrations.flask import FlaskIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 
-from db import Follower, Room, Session
+from jukebox_db import Follower, Room, Session
 
 sentry_sdk.init(
     dsn="https://877d23fec9764314b6f0f15533ce1574@o398013.ingest.sentry.io/5253121",

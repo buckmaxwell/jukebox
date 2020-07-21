@@ -6,7 +6,7 @@ import sys
 import pika
 import redis
 
-from db import Session, User
+from jukebox_db import Session, User
 
 current_module = sys.modules[__name__]
 
