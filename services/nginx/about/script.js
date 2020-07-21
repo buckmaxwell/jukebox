@@ -9,7 +9,7 @@ let colors = ["#553c7b", "#32CD32"];
 
   setInterval(() => {
     setRandomLinkColor();
-  }, 5000);
+  }, 2500);
 })();
 
 /* Dark Mode */

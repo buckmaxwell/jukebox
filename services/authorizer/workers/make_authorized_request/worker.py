@@ -1,6 +1,6 @@
 #!/usr/bin/env/python3
 
-from db import Authorization, Session
+from jukebox_db import Authorization, Session
 from time import sleep
 import arrow
 import async_messenger

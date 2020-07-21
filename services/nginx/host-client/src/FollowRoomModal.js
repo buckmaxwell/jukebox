@@ -1,5 +1,5 @@
 import { Modal, Button, Form } from 'react-bootstrap'
-import React, { useState } from 'react';
+import React from 'react';
 import axios from 'axios';
 
 
@@ -52,7 +52,7 @@ class FollowRoomModal extends React.Component {
 
         <Modal show={this.state.show} onHide={this.handleClose}>
           <Modal.Header closeButton>
-            <Modal.Title>Modal heading</Modal.Title>
+            <Modal.Title>Follow a room</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form onSubmit={this.handleSubmit}>
@@ -60,7 +60,7 @@ class FollowRoomModal extends React.Component {
                 <Form.Label>Room Code</Form.Label>
                 <Form.Control type="text" placeholder="ENTER 4 CHARACTER CODE" onChange={this.handleChange} />
                 <Form.Text className="text-muted">
-                  Get this from a friend, or follow a public room
+                  Get this from a friend or follow a public room
               </Form.Text>
               </Form.Group>
               <Button variant="primary" type="submit">

@@ -32,6 +32,7 @@ class RoomSettings extends React.Component {
     super(props);
     this.getRoomTableData = this.getRoomTableData.bind(this);
     this.addRoom = this.addRoom.bind(this);
+    this.handleRoomClicked = this.handleRoomClicked.bind(this);
     this.state = { roomTableData: [], isLoading: false };
     this.ROOMS_URL =
       process.env.REACT_APP_API_HOST + "/host/rooms";
@@ -64,6 +65,10 @@ class RoomSettings extends React.Component {
       });
   }
 
+  handleRoomClicked(room_row) {
+    console.log(room_row)
+  }
+
   componentDidMount() {
     this.setState({ isLoading: true });
     this.getRoomTableData();
@@ -76,8 +81,11 @@ class RoomSettings extends React.Component {
         <div style={{ maxWidth: '100%' }}>
           <DataTable
             title="Rooms you host or follow"
+            highlightOnHover={true}
+            striped={true}
             columns={roomTableColumns}
             data={this.state.roomTableData}
+            onRowClicked={this.handleRoomClicked}
           />
           <Button
             className="btn btn-primary col-sm-12"

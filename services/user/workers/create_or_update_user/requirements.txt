@@ -1,3 +1,7 @@
+Flask-HTTPAuth==4.0.0
+Flask==1.1.2
+Jinja2==2.11.2
+MarkupSafe==1.1.1
 appdirs==1.4.3
 appnope==0.1.0
 arrow==0.15.5
@@ -8,15 +12,12 @@ certifi==2020.4.5.1
 chardet==3.0.4
 click==7.1.2
 decorator==4.4.2
-Flask==1.1.2
-Flask-HTTPAuth==4.0.0
+git+https://github.com/buckmaxwell/jukebox.git@master#egg=jukebox_db&subdirectory=lib/jukebox_db
 idna==2.9
 isort==4.3.21
 itsdangerous==1.1.0
 jedi==0.17.0
-Jinja2==2.11.2
 lazy-object-proxy==1.4.3
-MarkupSafe==1.1.1
 mccabe==0.6.1
 parso==0.7.0
 pathspec==0.8.0

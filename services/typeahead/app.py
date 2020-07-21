@@ -32,12 +32,16 @@ def spotify_search_response_to_universal_format(resp_dict):
     for track_dict in resp_dict["tracks"]["items"]:
         result_dict = {}
         result_dict["name"] = track_dict["name"]
+        result_dict["isrc"] = track_dict["external_ids"].get("isrc")
+        result_dict["ean"] = track_dict["external_ids"].get("ean")
+        result_dict["upc"] = track_dict["external_ids"].get("upc")
         result_dict["service"] = "spotify"
         result_dict["type"] = track_dict["type"]
-        result_dict["uri"] = track_dict["uri"]
+        result_dict["spotify_id"] = track_dict["uri"]
         result_dict["id"] = track_dict["id"]
         result_dict["album_art"] = next(iter(track_dict["album"]["images"]), {}).get(
-            "url", "https://shop.r10s.jp/hanjo/cabinet/c/imgrc0071257501.jpg"
+            "url",
+            "https://shop.r10s.jp/hanjo/cabinet/c/imgrc0071257501.jpg",  # TODO: replace this wierd hot link
         )
         result_dict["artists"] = [a["name"] for a in track_dict["artists"]]
         results.append(result_dict)
