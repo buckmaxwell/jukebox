@@ -65,9 +65,8 @@ class RoomSettings extends React.Component {
       });
   }
 
-  handleRoomClicked(e) {
-    console.log(e)
-
+  handleRoomClicked(room_row) {
+    console.log(room_row)
   }
 
   componentDidMount() {
