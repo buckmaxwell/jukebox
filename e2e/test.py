@@ -84,7 +84,7 @@ try:
     troubleshooting_link2 = '//*[@id="responsive-navbar-nav"]/div/a[2]'
     chrome.find_element_by_xpath(troubleshooting_link2).click()
     time.sleep(0.5)
-    link_back_home = "/html/body/div/div[2]/a[1]"
+    link_back_home = "/html/body/div/div[1]/a"
     chrome.find_element_by_xpath(link_back_home).click()
     time.sleep(0.5)
 
