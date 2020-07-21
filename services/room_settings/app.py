@@ -1,5 +1,6 @@
 #!/usr/bin/env/python3
 
+import datetime
 import os
 import random
 import string
@@ -21,11 +22,11 @@ from flask import (
     url_for,
 )
 from flask_cors import CORS
+from redis_wait import redis_wait
 from sentry_sdk.integrations.flask import FlaskIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 
 from db import Follower, Room, Session
-from redis_wait import redis_wait
 
 sentry_sdk.init(
     dsn="https://877d23fec9764314b6f0f15533ce1574@o398013.ingest.sentry.io/5253121",
@@ -123,10 +124,17 @@ def my_rooms():
 
     # TODO: add followers - join table between rooms and users
 
-    rooms = session.query(Room).filter(Room.host == user_id).all()
+    rooms = (
+        session.query(Room)
+        .filter(Room.host == user_id)
+        .filter(Room.deleted_at == None)
+        .all()
+    )
+
     for follower in session.query(Follower).filter(Follower.user_id == user_id).all():
         rooms.append(follower.room)
     rooms = list(set(rooms))
+    rooms.sort(key=lambda r: r.expiration, reverse=True)
 
     data = []
     for room in rooms:
@@ -136,7 +144,11 @@ def my_rooms():
                 "id": str(room.id),
                 "code": room.code,
                 "expiration": room.expiration,
-                "expiration_human": arrow.get(room.expiration).humanize(),
+                "expiration_human": (
+                    arrow.get(room.expiration).humanize()
+                    if room.expiration > datetime.datetime.now()
+                    else "expired"
+                ),
                 "role": "host" if str(room.host) == user_id else "follower",
             }
         )
