@@ -123,16 +123,20 @@ def my_rooms():
         return room_code, 201
 
     # TODO: add followers - join table between rooms and users
-
     rooms = (
         session.query(Room)
         .filter(Room.host == user_id)
         .filter(Room.deleted_at == None)
+        .order_by(Room.expiration.desc())
         .all()
     )
 
-    for follower in session.query(Follower).filter(Follower.user_id == user_id).all():
-        rooms.append(follower.room)
+    rooms += [
+        follower.room
+        for follower in session.query(Follower)
+        .filter(Follower.user_id == user_id)
+        .all()
+    ]
     rooms = list(set(rooms))
     rooms.sort(key=lambda r: r.expiration, reverse=True)
 
