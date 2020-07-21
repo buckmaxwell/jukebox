@@ -113,4 +113,29 @@ class Authorization(Base):
     deleted_at = Column(DateTime)
 
 
+class Play(Base):
+    __tablename__ = "plays"
+    __table_args__ = {"schema": "player"}
+
+    id = Column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+        unique=True,
+        nullable=False,
+    )
+
+    isrc = Column(String(250))
+    upc = Column(String(250))
+    ean = Column(String(250))
+    spotify_id = Column(String(250))
+    room_code = Column(String(250))  # TODO: should this be id
+
+    created_at = Column(DateTime, default=datetime.datetime.now)
+    updated_at = Column(
+        DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now
+    )
+    deleted_at = Column(DateTime)
+
+
 __version__ = "0.0.1"

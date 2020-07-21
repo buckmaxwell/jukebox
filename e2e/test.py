@@ -25,8 +25,10 @@ try:
     print("Check that troubleshooting in client app works")
     troubleshooting_link = '//*[@id="responsive-navbar-nav"]/div/a[3]'
     chrome.find_element_by_xpath(troubleshooting_link).click()
-    link_back_home = "/html/body/div/div[2]/a[1]"
+    time.sleep(0.5)
+    link_back_home = "/html/body/div/div[1]/a"
     chrome.find_element_by_xpath(link_back_home).click()
+    time.sleep(0.5)
 
     print("Submit a bad room code")
     label_for_form_room_code_input = '//*[@id="root"]/div/div[2]/form/div/label'
@@ -34,6 +36,7 @@ try:
     room_code_submit = '//*[@id="root"]/div/div[2]/form/div/input[2]'
     chrome.find_element_by_xpath(room_code_input).send_keys("0000")
     chrome.find_element_by_xpath(room_code_submit).click()
+    time.sleep(0.5)
     chrome.find_element_by_xpath(label_for_form_room_code_input)
 
     print("Authenticate with Spotify")
@@ -41,6 +44,7 @@ try:
     authenticate_with_spotify_button = '//*[@id="root"]/div/div[2]/div/div/p/a'
     chrome.find_element_by_xpath(host_or_cohost_link).click()
     chrome.find_element_by_xpath(authenticate_with_spotify_button).click()
+    time.sleep(0.5)
 
     email_or_username_input = '//*[@id="login-username"]'
     password_input = '//*[@id="login-password"]'
@@ -71,6 +75,7 @@ try:
     )  # fake room, nbd
     room_code_modal_submit_button = "/html/body/div[3]/div/div/div[2]/form/button"
     chrome.find_element_by_xpath(room_code_modal_submit_button).click()
+    time.sleep(0.5)
 
     print("Check for Queue Songs Link")
     queue_songs_link = '//*[@id="responsive-navbar-nav"]/div/a[1]'
@@ -78,14 +83,17 @@ try:
     print("Check that troubleshooting in host app works")
     troubleshooting_link2 = '//*[@id="responsive-navbar-nav"]/div/a[2]'
     chrome.find_element_by_xpath(troubleshooting_link2).click()
+    time.sleep(0.5)
     link_back_home = "/html/body/div/div[2]/a[1]"
     chrome.find_element_by_xpath(link_back_home).click()
+    time.sleep(0.5)
 
     print("Enter the room")
     room_code_input = '//*[@id="root"]/div/div[2]/form/div/input[1]'
     room_code_submit = '//*[@id="root"]/div/div[2]/form/div/input[2]'
     chrome.find_element_by_xpath(room_code_input).send_keys(room_code)
     chrome.find_element_by_xpath(room_code_submit).click()
+    time.sleep(0.5)
 
     print("Queue songs")
     search_songs_input = '//*[@id="root"]/div/div[2]/div[1]/div[1]/div[1]/input[1]'
@@ -95,15 +103,18 @@ try:
 
     first_suggestion = '//*[@id="song-search-typeahead-item-0"]/div'
     chrome.find_element_by_xpath(first_suggestion).click()
+    time.sleep(0.5)
 
     submit_selected_song_button = '//*[@id="qsong"]'
     chrome.find_element_by_xpath(submit_selected_song_button).click()
+    time.sleep(0.5)
 
     chrome.find_element_by_xpath(search_songs_input)
 
     print("Leave Room")
     leave_room_link = '//*[@id="responsive-navbar-nav"]/div/a[2]'
     chrome.find_element_by_xpath(leave_room_link).click()
+    time.sleep(0.5)
     label_for_form_room_code_input = '//*[@id="root"]/div/div[2]/form/div/label'
     chrome.find_element_by_xpath(label_for_form_room_code_input)
 
