@@ -65,14 +65,14 @@ def add_room(user_id):
 
 
 def add_follower(room_code, user_id):
-    room_id = session.query(Room).filter(Room.code == room_code).first().id
+    room_id = session.query(Room).filter(Room.code.ilike(room_code)).first().id
     follower = Follower(room_id=str(room_id), user_id=str(user_id))
 
     session.add(follower)
     session.commit()
 
     r.rpush(room_code, str(user_id))
-    return follower.id
+    return str(follower.id)
 
 
 def login_required(f):
