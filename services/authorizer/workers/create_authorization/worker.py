@@ -66,17 +66,21 @@ def create_authorization_helper(code, key, service, guid):
 
 
 def create_authorization(ch, method, properties, body):
+    try:
+        request = json.loads(body.decode())
 
-    request = json.loads(body.decode())
+        guid = request.get("guid", str(uuid.uuid4()))
+        code = request["code"]
+        key = request["key"]
+        service = request["service"]
 
-    guid = request.get("guid", str(uuid.uuid4()))
-    code = request["code"]
-    key = request["key"]
-    service = request["service"]
+        create_authorization_helper(code, key, service, guid)
 
-    create_authorization_helper(code, key, service, guid)
-
-    ch.basic_ack(delivery_tag=method.delivery_tag)
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+    except Exception as e:
+        # This counts as dropping it on the ground. It's ok. It will block the queue if we keep it in here.
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+        raise e
 
 
 if __name__ == "__main__":
