@@ -71,7 +71,7 @@ def add_follower(room_code, user_id):
     session.add(follower)
     session.commit()
 
-    r.rpush(room_code, str(user_id))
+    r.rpush(room_code.upper(), str(user_id))
     return str(follower.id)
 
 
@@ -107,6 +107,7 @@ def login_required(f):
 @app.route("/host/rooms/<room_code>/followers", methods=["POST"])
 @login_required
 def follow(room_code):
+    room_code = room_code.upper()
     user_id = r.get(request.cookies["EBC_HOST_USER"])
     if request.method == "POST":
         follower_id = add_follower(room_code, user_id)
