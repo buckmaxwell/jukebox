@@ -58,7 +58,7 @@ class SongSelect extends React.Component {
   render() {
     return (
       <div className="SongSelect">
-        <p style={{ "text-align": "right" }} className="small text-muted">Not hearing songs? Go over to Co-Host and follow {this.props.roomCode} </p>
+        <small style={{ "text-align": "right" }} className="small text-muted">Not hearing songs? (1) Make sure spotify is playing (2) go over to Co-Host and follow {this.props.roomCode} if you are not the owner. </small>
         <AsyncTypeahead
           id="song-search-typeahead"
           ref={typeahead => this.typeahead = typeahead}
