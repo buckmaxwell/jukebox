@@ -77,26 +77,26 @@ class RoomSettings extends React.Component {
 
   render() {
     return (
-      <div className="RoomSettings">
-        <div style={{ maxWidth: '100%' }}>
-          <DataTable
-            title="Rooms you host or follow"
-            highlightOnHover={true}
-            striped={true}
-            columns={roomTableColumns}
-            data={this.state.roomTableData}
-            onRowClicked={this.handleRoomClicked}
-          />
+      <section className="RoomSettings">
+        <h1>Rooms you host or follow</h1>
+        <div className="mb-5">
           <Button
-            className="btn btn-primary col-sm-12"
+            className="btn btn-secondary"
             onClick={this.addRoom}
           >
             Add Room
           </Button>
           <FollowRoomModal />
-
         </div>
-      </div >
+        <DataTable
+          title=""
+          highlightOnHover={true}
+          striped={false}
+          columns={roomTableColumns}
+          data={this.state.roomTableData}
+          onRowClicked={this.handleRoomClicked}
+        />
+      </section>
     );
   }
 }

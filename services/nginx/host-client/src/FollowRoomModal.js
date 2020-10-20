@@ -46,26 +46,29 @@ class FollowRoomModal extends React.Component {
   render() {
     return (
       <>
-        <Button className="btn btn-primary col-sm-12" variant="primary" onClick={this.handleShow}>
+        <Button className="btn btn-secondary ml-5" onClick={this.handleShow}>
           Follow Room
-      </Button>
+        </Button>
 
-        <Modal show={this.state.show} onHide={this.handleClose}>
-          <Modal.Header closeButton>
-            <Modal.Title>Follow a room</Modal.Title>
-          </Modal.Header>
+        <Modal
+          show={this.state.show}
+          onHide={this.handleClose}
+          animation={false}
+          centered
+          className="text-center modal-large"
+        >
+          <Modal.Header closeButton />
           <Modal.Body>
+            <h2>Follow a room</h2>
             <Form onSubmit={this.handleSubmit}>
               <Form.Group controlId="formRoomCode">
-                <Form.Label>Room Code</Form.Label>
-                <Form.Control type="text" placeholder="ENTER 4 CHARACTER CODE" onChange={this.handleChange} />
-                <Form.Text className="text-muted">
-                  Get this from a friend or follow a public room
-              </Form.Text>
+                <Form.Label srOnly>Room Code</Form.Label>
+                <p>Get the code from a friend or follow a public room</p>
+                <Form.Control type="text" placeholder="Enter 4 Character Code" onChange={this.handleChange} />
               </Form.Group>
-              <Button variant="primary" type="submit">
-                Submit
-            </Button>
+              <Button className="btn btn-secondary" type="submit">
+                Follow Room
+              </Button>
             </Form>
           </Modal.Body>
         </Modal>
