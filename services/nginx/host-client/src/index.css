@@ -1,6 +1,7 @@
 /* --- Variables --- */
 :root {
   /* Colors */
+  --bg-black: #13141E;
   --bg-dark: #16182C;
   --bg-main: #1F2240;
   --bg-light: #fff;

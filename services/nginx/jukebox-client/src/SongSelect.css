@@ -1,20 +1,63 @@
-@import url("https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Permanent+Marker&display=swap");
-h1 {
-  color: #ffffff;
+.SongSelect .SongSelect-search {
+  display: flex;
+  align-items: flex-start;
 }
-input.songSelect,
-label {
-  font-family: "Luckiest Guy", cursive;
-  font-size: xx-large;
+
+.SongSelect .input-group {
+  position: relative;
 }
-input.songSelect {
-  padding: 20px 12px;
-  background-color: #e0e0e0;
-  color: #000;
-  border: 0 solid;
-  border-radius: 12px;
-  box-shadow: none;
+
+.SongSelect .input-group:before {
+  position: absolute;
+  top: 1.4rem;
+  left: 1.3rem;
+  width: 2rem;
+  height: 2rem;
+  content: '';
+  background: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='rgba(255,255,255, 1)' d='M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z'/%3E%3C/svg%3E");
 }
-.SongSelect {
-  margin-top: 60px;
+
+.SongSelect .rbt-input[type="text"] {
+  border: none;
+  color: var(--text-color);
+  padding: 1.3rem 1.3rem 1.3rem 4.2rem;
+  transition: all var(--transition-default);
+}
+
+.SongSelect .rbt-input:focus,
+.SongSelect .rbt-input:active {
+  background: rgba(255, 255, 255, .1);
+}
+
+.SongSelect .rbt-input::-webkit-input-placeholder {
+  color: var(--text-color);
+}
+
+.SongSelect .rbt-input:-ms-input-placeholder {
+  color: var(--text-color);
+}
+
+.SongSelect .rbt-input::placeholder {
+  color: var(--text-color);
+}
+
+.SongSelect .rbt-menu {
+  background: var(--bg-black);
+  color: var(--text-color);
+}
+
+.SongSelect .rbt-menu .dropdown-item {
+  font-size: var(--font-size-text-small);
+  padding: 1.3rem;
+  color: var(--text-color);
+}
+
+.SongSelect .rbt-menu .dropdown-item:hover {
+  background: var(--accent-color);
+  transition: all var(--transition-default);
+}
+
+.SongSelect .SongSelect-search #qsong {
+  flex: 0 0 12rem;
+  padding: 1.3rem 1.5rem;
 }

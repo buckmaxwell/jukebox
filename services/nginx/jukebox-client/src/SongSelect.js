@@ -57,47 +57,53 @@ class SongSelect extends React.Component {
 
   render() {
     return (
-      <div className="SongSelect">
-        <p style={{ "text-align": "right" }} className="small text-muted">Not hearing songs? (1) Make sure spotify is playing (2) go over to Co-Host and follow {this.props.roomCode.toUpperCase()} if you are not the owner. </p>
-        <AsyncTypeahead
-          id="song-search-typeahead"
-          ref={typeahead => this.typeahead = typeahead}
-          className="input-group input-group-lg"
-          isLoading={this.state.isLoading}
-          labelKey={song => `${song.name} - ${song.artists.join(', ')}`}
-          onSearch={this.handleGetSongs}
-          onChange={songs => this.setState({ selectedSong: songs[0] })}
-          options={this.state.songs}
-          placeholder="Search songs or artists"
-          renderMenuItemChildren={(song, props) => (
-            <div>
-              <img
-                className="rounded"
-                alt={`${song.name} - ${song.artists.join(', ')}`}
-                src={song.album_art}
-                style={{
-                  height: '50px',
-                  marginRight: '10px',
-                  width: '50px',
-                }}
-              />
-              <span className="ml-4">{`${song.name} - ${song.artists.join(', ')}`}</span>
-            </div>
-          )}
-          filterBy={(song, props) => {
-            /* Song filtering can happen server side only */
-            return song
-          }}
-        />
+      <section className="SongSelect">
+        <h1>Room {this.props.roomCode.toUpperCase()}</h1>
+        <div className="SongSelect-search">
+          <AsyncTypeahead
+            id="song-search-typeahead"
+            ref={typeahead => this.typeahead = typeahead}
+            className="input-group input-group-lg"
+            isLoading={this.state.isLoading}
+            labelKey={song => `${song.name} - ${song.artists.join(', ')}`}
+            onSearch={this.handleGetSongs}
+            onChange={songs => this.setState({ selectedSong: songs[0] })}
+            options={this.state.songs}
+            placeholder="Search songs or artists"
+            renderMenuItemChildren={(song, props) => (
+              <div>
+                <img
+                  className="rounded"
+                  alt={`${song.name} - ${song.artists.join(', ')}`}
+                  src={song.album_art}
+                  style={{
+                    height: '50px',
+                    marginRight: '10px',
+                    width: '50px',
+                  }}
+                />
+                <span className="ml-4">{`${song.name} - ${song.artists.join(', ')}`}</span>
+              </div>
+            )}
+            filterBy={(song, props) => {
+              /* Song filtering can happen server side only */
+              return song
+            }}
+          />
+          <button
+            id="qsong"
+            type="button"
+            className="btn btn-primary d-block ml-auto mr-auto"
+            onClick={this.queueSong}>
+            Queue Song
+          </button>
+        </div>
         <button
-          id="qsong"
-          type="button"
-          className="btn btn-primary col-sm-12"
-          onClick={this.queueSong}>
-          QUEUE THIS SONG
-        </button>
+          className="bn btn-secondary d-block ml-auto mr-auto"
+          onClick={this.props.onLeaveRoom}
+        >Leave Room</button>
         <div id="flashContainer"></div>
-      </div>
+      </section>
     );
   }
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import Connection from "./Connection";
 import NavBar from "./NavBar";
 import RoomCodeForm from "./RoomCodeForm";
 import SongSelect from "./SongSelect";
@@ -75,11 +76,12 @@ class App extends React.Component {
 
     return (
       <div className="App">
-        <NavBar onLeaveRoom={this.handleLeaveRoom} />
-        <div className="container">
+        <NavBar />
+        <Connection checked={isLoggedIn ? "checked" : ""} />
+        <main className="container">
           {body}
           <Flash message={this.state.flashMessage} art={this.state.flashAlbumArt} />
-        </div>
+        </main>
       </div>
     );
   }
