@@ -1,38 +1,267 @@
-.App {
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap");
+
+/* --- Global Styles --- */
+* {
+  border: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+::before,
+::after {
+  box-sizing: inherit;
+}
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+html {
+  font-size: 10px;
+  scroll-behavior: smooth;
+  background: var(--bg-main);
+}
+
+body {
+  font-family: 'Lato', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: var(--font-size-text);
+  line-height: var(--font-line-height);
+  background: inherit;
+  color: var(--text-color);
+}
+
+section {
+  padding: 0 0 9.5rem;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
   text-align: center;
+  margin: 0 0 5.5rem;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-bold);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+p {
+  font-size: inherit;
+  color: inherit;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+p small {
+  font-size: var(--font-size-text-small);
+}
+
+a {
+  text-decoration: none;
+}
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+input[type="tel"] {
+  height: auto;
+  font-size: var(--font-size-text);
+  margin: 0 0 4.5rem;
+  padding: 1.3rem;
+  background: none;
+  border: 1px solid var(--text-color);
+  border-radius: 0;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="tel"]:focus {
+  outline: 0;
+  color: var(--accent-color);
+  border-color: var(--text-color);
+  box-shadow: none;
+}
+
+img {
+  max-width: 100%;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+/* Bootstrap Overwrites */
+.article-bubble,
+.modal-content {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  width: 95%;
+  max-width: 63rem;
+  height: 48.5rem;
+  text-align: center;
+  margin: 0 auto;
+  background: top center url('./assets/bubble-bg.svg') no-repeat;
+  background-size: 100% 100%;
 }
 
-.App-link {
-  color: #61dafb;
+@media only screen and (max-width: 767px) {
+  .article-bubble:not(.bubble-large),
+  .modal:not(.modal-large) .modal-content {
+    height: 40rem;
+  }
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+@media only screen and (max-width: 525px) {
+  .article-bubble:not(.bubble-large),
+  .modal:not(.modal-large) .modal-content {
+    height: 36rem;
   }
 }
+
+@media only screen and (max-width: 375px) {
+  .article-bubble:not(.bubble-large),
+  .modal:not(.modal-large) .modal-content {
+    height: 32rem;
+  }
+
+  .article-bubble.bubble-large,
+  .modal-large .modal-content {
+    height: 55rem;
+  }
+}
+
+.article-bubble p {
+  max-width: 75%;
+  margin: 0 auto 5rem;
+}
+
+/* Buttons */
+.btn {
+  font-weight: 400;
+  letter-spacing: .35px;
+  border-radius: 0;
+  transition: all var(--transition-default);
+}
+
+.btn:focus,
+.btn:hover {
+  box-shadow: none;
+}
+
+.btn-primary {
+  font-size: var(--font-size-text);
+  background: var(--accent-color);
+  border: 0;
+  padding: 1rem 1.5rem;
+}
+
+.btn-primary:focus,
+.btn-primary:hover {
+  background: var(--bg-light);
+  color: var(--accent-color);
+}
+
+.btn-secondary,
+.navbar-dark .navbar-nav .btn-secondary.nav-link {
+  font-size: var(--font-size-text-small);
+  background: none;
+  border: 1px solid var(--text-color);
+  padding: .8rem 1.2rem;
+}
+
+.btn-secondary:focus,
+.btn-secondary:hover,
+.navbar-dark .navbar-nav .btn-secondary.nav-link:focus,
+.navbar-dark .navbar-nav .btn-secondary.nav-link:hover {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: var(--text-color);
+}
+
+/* Modal */
+/* .modal-backdrop {
+  background: var(--bg-main);
+}
+
+.modal-backdrop.show {
+  opacity: .95;
+}
+
+.modal-content,
+.modal .modal-header {
+  border: 0;
+}
+
+@media (min-width: 576px) {
+  .modal-dialog {
+    max-width: 630px;
+  }
+}
+
+.modal .modal-header {
+  padding: 0;
+}
+
+.modal .modal-header .close {
+  opacity: 1;
+  position: fixed;
+  top: 3rem;
+  right: 3rem;
+  margin: 0;
+  padding: 0;
+  font-size: 4.5rem;
+  line-height: 0.6;
+  text-shadow: none;
+  color: var(--text-color);
+  outline: 0;
+}
+
+.modal h2 {
+  margin: 0 auto 3.5rem;
+}
+
+.modal p {
+  margin: 0 auto 2.5rem;
+}
+
+.modal ol {
+  list-style: decimal;
+  text-align: left;
+  margin: 0 0 2.5rem 2rem;
+}
+
+.modal ol li {
+  margin: 0 0 1.5rem;
+}
+
+.modal .modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 65%;
+  padding: 1rem 1rem 4rem;
+} */

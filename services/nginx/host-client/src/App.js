@@ -2,6 +2,7 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { createBrowserHistory } from 'history';
+import Connection from "./Connection";
 import NavBar from "./NavBar";
 import ServiceSelect from "./ServiceSelect";
 import RoomSettings from "./RoomSettings";
@@ -80,9 +81,10 @@ class App extends React.Component {
     return (
       <div className="App">
         <NavBar />
-        <div className="container">
+        <Connection checked={isLoggedIn ? "checked" : ""} />
+        <main className="container">
           {body}
-        </div>
+        </main>
       </div>
     );
   }

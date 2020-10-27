@@ -9,24 +9,24 @@ class NavBar extends React.Component {
 
   render() {
     return (
-      <div className="NavBar">
-        <Navbar collapseOnSelect expand="lg" variant="dark" sticky="top">
+      <header className="NavBar">
+        <Navbar className="container" collapseOnSelect expand="lg" variant="dark" sticky="top">
           <Navbar.Brand href="/">
             <img src={logo} width="200px;" alt="Logo" />
           </Navbar.Brand>
-          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
-            <Nav className="mr-auto" activeKey="/">
-              <Nav.Link href="/rooms/">Host or Cohost</Nav.Link>
-              <Nav.Link
-                eventKey="leaveRoom"
-                onSelect={this.props.onLeaveRoom}
-              >Leave Room</Nav.Link>
-              <Nav.Link href="/about/">Trouble Shooting</Nav.Link>
+            <Nav className="ml-auto" activeKey="/">
+              <Nav.Link href="/">Queue Songs</Nav.Link>
+              <Nav.Link href="/rooms">Host or Cohost</Nav.Link>
+              <Nav.Link href="/about/">About</Nav.Link>
             </Nav>
           </Navbar.Collapse>
+          <Nav.Link className="btn btn-secondary ml-auto btn-create-room" href="/">
+            Create room
+          </Nav.Link>
+          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         </Navbar>
-      </div >
+      </header>
     );
   }
 }

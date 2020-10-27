@@ -1,6 +1,5 @@
 import React from 'react';
 import axios from 'axios';
-import './RoomCodeForm.css';
 
 class RoomCodeForm extends React.Component {
   // do we need a constructor here?
@@ -30,20 +29,23 @@ class RoomCodeForm extends React.Component {
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit} className="roomCodeForm form-inline">
-        <div className="form-group col-sm-12">
-          <label>ROOM CODE</label>
-          <input
-            maxLength="4"
-            type="text"
-            value={this.state.value}
-            className="form-control col-sm-12 jb-input"
-            placeholder="ENTER 4 CHARACTER CODE"
-            onChange={this.handleChange}
-          />
-          <input type="submit" className="btn btn-primary col-sm-12" value="JOIN ROOM" />
-        </div>
-      </form>
+      <section className="RoomCodeForm">
+        <h1>Room Code</h1>
+        <article className="article-bubble bubble-large">
+          <p>Get the code from a friend or follow a public room.</p>
+          <form onSubmit={this.handleSubmit} className="text-center">
+            <input
+              maxLength="4"
+              type="text"
+              value={this.state.value}
+              className="form-control col-sm-12 jb-input"
+              placeholder="Enter 4 Character Code"
+              onChange={this.handleChange}
+            />
+            <input type="submit" className="btn btn-primary" value="Join Room" />
+          </form>
+        </article>
+      </section>
     );
   }
 }

@@ -1,0 +1,48 @@
+.Connection {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 140rem;
+  height: 3.9rem;
+  margin: 4.5rem auto 7.5rem;
+}
+
+.Connection input {
+  width: 3.5rem;
+  height: 2.2rem;
+  outline: 0;
+  appearance: none;
+  border-radius: 20px;
+  border: 1px solid var(--text-color);
+}
+
+.Connection input:checked {
+  background: var(--bg-light);
+}
+
+.Connection label {
+  font-family: 'Lato', sans-serif;
+  width: calc(45% - 3.3rem);
+  font-size: var(--font-size-text);
+  word-break: break-all;
+  hyphens: auto;
+  margin: 0;
+  padding: 0 0 0 1rem;
+}
+
+.Connection label:before {
+  position: absolute;
+  top: 1.3rem;
+  left: 2rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  content: '';
+  background: var(--bg-light);
+  border-radius: 100%;
+  transition: all .35s;
+}
+
+.Connection input:checked + label:before {
+  left: 3.3rem;
+  background: var(--accent-color);
+}

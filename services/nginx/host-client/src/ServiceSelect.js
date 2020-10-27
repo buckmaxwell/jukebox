@@ -1,25 +1,21 @@
 import React from 'react';
-import './ServiceSelect.css';
-import { Jumbotron, Button } from 'react-bootstrap'
-
+import { Button } from 'react-bootstrap'
 
 class ServiceSelect extends React.Component {
 
   render() {
     return (
-      <div className="ServiceSelect">
-        <Jumbotron className="selectJumbo">
-          <h1>Select a premium service to use with your host account</h1>
-          <hr></hr>
-          <p>
-            <Button
-              href="/spotify/login"
-              className="btn btn-primary col-sm-12">
-              Spotify
-            </Button>
-          </p>
-        </Jumbotron>
-      </div >
+      <section className="ServiceSelect">
+        <h1>Connect your host account</h1>
+        <article className="article-bubble">
+          <p>Please select a premium service to use with your host account.</p>
+          <Button
+            href="/spotify/login"
+            className="btn btn-primary">
+            Spotify
+          </Button>
+        </article>
+      </section>
     );
   }
 }

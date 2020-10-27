@@ -1,3 +1,39 @@
-.RoomSettings {
-  margin-top: 60px;
+.RoomSettings .rdt_Table {
+  background: var(--bg-dark);
+}
+
+.RoomSettings .rdt_Table > div {
+  background: var(--bg-dark);
+  color: var(--text-color);
+}
+
+.RoomSettings .rdt_TableHeader {
+  display: none;
+}
+
+.RoomSettings .rdt_TableHeadRow {
+  background: var(--accent-color);
+  padding: 0 3rem;
+}
+
+.RoomSettings .rdt_TableHeadRow .rdt_TableCol {
+  font-size: var(--font-size-table-header);
+  color: var(--text-color);
+}
+
+.RoomSettings .rdt_TableRow {
+  min-height: 5.2rem;
+  font-size: var(--font-size-table-text) !important;
+  background: var(--bg-dark) !important;
+  color: var(--text-color) !important;
+  padding: 0 3rem;
+}
+
+.RoomSettings .rdt_TableRow:not(:last-of-type) {
+  border-bottom: 1px solid var(--text-color) !important;
+}
+
+.RoomSettings .rdt_TableRow:hover {
+  background: var(--accent-color) !important;
+  color: var(--text-color) !important;
 }
