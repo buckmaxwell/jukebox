@@ -8,7 +8,6 @@ class SongSelect extends React.Component {
   // do we need a constructor here?
   constructor(props) {
     super(props);
-    this.handleLeaveRoom = this.handleLeaveRoom.bind(this);
     this.handleGetSongs = this.handleGetSongs.bind(this);
     this.queueSong = this.queueSong.bind(this);
     this.state = { selectedSong: null, isLoading: false, songs: [] };
@@ -16,10 +15,6 @@ class SongSelect extends React.Component {
     this.TYPEAHEAD_URL =
       process.env.REACT_APP_API_HOST + "/tracks?q=:q";
     this.PLAYER_URL = process.env.REACT_APP_API_HOST + "/player/";
-  }
-
-  handleLeaveRoom() {
-    this.props.onLeaveRoom();
   }
 
   queueSong() {
@@ -98,10 +93,6 @@ class SongSelect extends React.Component {
             Queue Song
           </button>
         </div>
-        <button
-          className="bn btn-secondary d-block ml-auto mr-auto"
-          onClick={this.props.onLeaveRoom}
-        >Leave Room</button>
         <div id="flashContainer"></div>
       </section>
     );

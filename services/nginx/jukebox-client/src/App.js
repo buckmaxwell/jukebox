@@ -77,7 +77,11 @@ class App extends React.Component {
     return (
       <div className="App">
         <NavBar />
-        <Connection checked={isLoggedIn ? "checked" : ""} />
+        <Connection
+          checked={isLoggedIn ? "checked" : ""}
+          isLoggedIn={isLoggedIn ? true : false}
+          onLeaveRoom={this.handleLeaveRoom}
+        />
         <main className="container">
           {body}
           <Flash message={this.state.flashMessage} art={this.state.flashAlbumArt} />
