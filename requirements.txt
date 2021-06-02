@@ -44,7 +44,7 @@ six==1.14.0
 spotify-request @ git+https://github.com/buckmaxwell/jukebox.git@300eb9b39f17d8f7fc583b51ce59ec1e5288e12a#subdirectory=lib/spotify_request
 toml==0.10.0
 typed-ast==1.4.1
-urllib3==1.25.9
+urllib3==1.26.5
 wcwidth==0.1.9
 wrapt==1.12.1
 zipp==3.1.0
