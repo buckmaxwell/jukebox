@@ -19,7 +19,7 @@ git+https://github.com/buckmaxwell/jukebox.git@master#egg=jukebox_db&subdirector
 idna==2.9
 ipdb==0.13.2
 ipython-genutils==0.2.0
-ipython==7.14.0
+ipython==7.16.3
 isort==4.3.21
 itsdangerous==1.1.0
 jedi==0.17.0
